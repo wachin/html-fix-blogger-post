@@ -20,27 +20,15 @@ def mejorar_tablas(html):
     for table in soup.find_all('table'):
         table['style'] = "border-collapse: collapse; width: 100%;"
         
-        for i, row in enumerate(table.find_all('tr')):
-            if i == 0:
-                row['style'] = "background-color: #eaecf0ff;"
-            elif i % 2 == 1:
-                row['style'] = "background-color: #ffffffff;"
-            else:
-                row['style'] = "background-color: #eff0ffff;"
-        
         for th in table.find_all('th'):
             th['style'] = "border: 1px solid black; padding: 8px; text-align: left;"
         
         for td in table.find_all('td'):
             td['style'] = "border: 1px solid black; padding: 8px; text-align: left;"
         
-        # Envolver en un bloque desplazable
-        wrapper = soup.new_tag('pre', **{
-            "class": "table-code-box",
-            "style": "background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd; overflow-x: auto;"
-        })
-        table.insert_before(wrapper)
-        wrapper.append(table.extract())
+        # Envolver en un contenedor desplazable
+        div = soup.new_tag("div", style="overflow-x: auto;")
+        table.wrap(div)
     
     return str(soup)
 
