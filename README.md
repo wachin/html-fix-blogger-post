@@ -1,4 +1,6 @@
-# html-fix-blogger-post
+# El porqué de este script
+
+Estoy usando markdown para escribir mis tutoriales y luego el archivo .md resultante lo convierto a html y lo pego en una entrada de Blogger, pero como las cajas de código tienen una vista no muy bien aceptable y como además las tablas convertidas no tienen los bordes de colores, pues este script sirve para aplicar un fix al archivo html dado por pandoc y que quede bonito
 
 # Tutorial de Instalación y Uso de HTML Fixer en Debian 12
 
@@ -65,6 +67,8 @@ Esto generará un archivo `archivo-fix.html` con las mejoras aplicadas.
 - Asegúrate de que el script esté en el mismo directorio donde ejecutas los comandos o proporciona la ruta completa.
 
 Con estos pasos, podrás escribir en Markdown, convertirlo a HTML y mejorar su formato automáticamente. 🚀
+
+Dios te bendiga
 
 
 
