@@ -2,7 +2,7 @@
 
 Estoy usando markdown para escribir mis tutoriales y luego el archivo .md resultante lo convierto a html y lo pego en una entrada de Blogger, pero como las cajas de código tienen una vista no muy bien aceptable y como además las tablas convertidas no tienen los bordes de colores, pues este script sirve para aplicar un fix al archivo html dado por pandoc y que quede bonito
 
-# Tutorial de Instalación y Uso de HTML Fixer en Debian 12
+# Tutorial de Instalación y Uso de HTML Fixer en Debian
 
 Este tutorial explica cómo instalar las dependencias necesarias y cómo utilizar el script en sus versiones de línea de comandos (CLI) y con interfaz gráfica (GUI) en Debian 12.
 
@@ -14,7 +14,7 @@ Antes de ejecutar el script, necesitas instalar algunas dependencias necesarias.
 
 ```sh
 sudo apt update
-sudo apt install python3-bs4 python3-tk pandoc
+sudo apt install python3-bs4 python3-tk pandoc git
 ```
 
 - `python3-bs4`: Instala BeautifulSoup4 para manipulación de HTML.
@@ -35,19 +35,9 @@ Si tienes un archivo Markdown (`archivo.md`), conviértelo a HTML con:
 ```sh
 pandoc archivo.md -o archivo.html
 ```
-
-#### **Paso 2: Aplicar el Fix al HTML**
-Ejecuta el script CLI con:
-
-```sh
-python3 cli_html_fixer.py archivo.html
-```
-
-Esto generará un archivo `archivo-fix.html` con las mejoras aplicadas.
-
 ---
 
-### **2.2. Usar la versión GUI (Interfaz Gráfica)**
+### 2 Aplicar el Fix al HTML con la versión GUI (Interfaz Gráfica)
 
 1. Ejecuta el script GUI con:
 
@@ -58,6 +48,24 @@ Esto generará un archivo `archivo-fix.html` con las mejoras aplicadas.
 2. Se abrirá una ventana donde podrás seleccionar el archivo `.html` generado con `pandoc`.
 3. Una vez procesado, se guardará automáticamente como `archivo-fix.html`.
 4. El programa mostrará la ubicación del archivo generado.
+
+#### Paso 3: Aplicar el Fix al HTML desde la terminal
+Si estas usando la teminal de linux o si estás en un celular con Andorid usando Termux puedes instalar allí git y las dependencias:
+
+```sh
+sudo apt update
+sudo apt install python3-bs4 python3 pandoc git
+```
+
+ y convertir el .md a html y aplicar este Fix
+
+Ejecuta el script CLI con:
+
+```sh
+python3 cli_html_fixer.py archivo.html
+```
+
+Esto generará un archivo `archivo-fix.html` con las mejoras aplicadas.
 
 ---
 
