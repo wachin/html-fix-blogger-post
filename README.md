@@ -49,17 +49,27 @@ pandoc archivo.md -o archivo.html
 3. Una vez procesado, se guardará automáticamente como `archivo-fix.html`.
 4. El programa mostrará la ubicación del archivo generado.
 
-#### Paso 3: Aplicar el Fix al HTML desde la terminal
-Si estas usando la teminal de linux o si estás en un celular con Andorid usando Termux puedes instalar allí git y las dependencias:
+### 3 Aplicar el Fix al HTML desde la terminal de Linux
+Si deseas usar la terminal de Linux ejecuta el script CLI con:
 
 ```sh
-sudo apt update
-sudo apt install python3-bs4 python3 pandoc git
+python3 cli_html_fixer.py archivo.html
 ```
 
- y convertir el .md a html y aplicar este Fix
+### 4 Aplicar el Fix al HTML desde la terminal de Termux en Android
+Si estás en un celular con Andorid y [estás usando Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux) puedes instalar allí git y las dependencias:
 
-Ejecuta el script CLI con:
+```
+pkg install git pandoc python3
+```
+
+y luego instalar el paquete beautifulsoup4 con el comando: 
+
+```sh
+python -m pip install bs4
+```
+
+ y convertir el .md a html ejecutando el script CLI con:
 
 ```sh
 python3 cli_html_fixer.py archivo.html
