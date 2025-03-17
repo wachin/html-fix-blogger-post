@@ -80,13 +80,39 @@ Esto generará un archivo `archivo-fix.html` con las mejoras aplicadas.
 ---
 
 ## 3. Notas Finales
-- Puedes usar cualquier editor de texto para escribir en Markdown.
-- `pandoc` permite muchas opciones adicionales para mejorar la conversión de Markdown a HTML.
+- Cuando vaya a convertir un markdown que tiene cajas de comandos de terminal asegúrese que tiene la etiqueta de cada codigo pues sino no se convierte la caja, ejemplo deben estar así:
+
+~~~
+```bash
+sudo apt update
+```
+~~~
+
+o si es algún código en python:
+
+~~~
+```python
+print("Hola, mundo!")
+```
+~~~
+
+y si es sólo texto
+
+~~~
+```plaintext
+ejemplo de texto en una caja de código
+```
+~~~
+
+y así sucesivamente siempre debe ir una etiqueta en el código de la caja
+
+- Puedes usar cualquier editor de texto para escribir en Markdown, claro que debes saber Markdown.
+- `pandoc` permite muchas opciones adicionales para mejorar la conversión de Markdown a HTML, puedes averiguar en internet algún arreglo que necesites
 - Asegúrate de que el script esté en el mismo directorio donde ejecutas los comandos o proporciona la ruta completa.
 
-Con estos pasos, podrás escribir en Markdown, convertirlo a HTML y mejorar su formato automáticamente. 🚀
+Esta es la forma en la que convierto markdowna html para algunas de mis entradas en Blogger. 🚀
 
-Dios te bendiga
+Dios les bendiga
 
 
 
