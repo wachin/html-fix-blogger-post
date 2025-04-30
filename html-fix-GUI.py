@@ -13,12 +13,18 @@ def mejorar_caja_codigo(html):
                       "overflow: auto; padding: 28px 10px 10px 20px; z-index: 10000;"
     return str(soup)
 
-def mejorar_tablas(html):
+def mejorar_tablas(html, porcentaje_fuente):
     """Mejora la apariencia de las tablas en el HTML."""
     soup = BeautifulSoup(html, 'html.parser')
     
     for table in soup.find_all('table'):
-        table['style'] = "border-collapse: collapse; width: 100%;"
+        estilo_base = "border-collapse: collapse; width: 100%;"
+        
+        # Aplicar tamaño de fuente si el porcentaje es válido
+        if porcentaje_fuente:
+            estilo_base += f" font-size: {porcentaje_fuente};"
+        
+        table['style'] = estilo_base
         
         for i, row in enumerate(table.find_all('tr')):
             if i == 0:
@@ -44,8 +50,12 @@ def mejorar_tablas(html):
     
     return str(soup)
 
-def procesar_archivo():
+def procesar_archivo(entry_fuente):
     """Procesa el archivo seleccionado y genera la versión mejorada."""
+    porcentaje_fuente = entry_fuente.get().strip()
+    if porcentaje_fuente and not porcentaje_fuente.endswith('%'):
+        porcentaje_fuente += '%'  # Asegurar formato correcto
+    
     filepath = filedialog.askopenfilename(filetypes=[("Archivos HTML", "*.html")])
     if not filepath:
         return
@@ -54,7 +64,7 @@ def procesar_archivo():
         html = file.read()
     
     html = mejorar_caja_codigo(html)
-    html = mejorar_tablas(html)
+    html = mejorar_tablas(html, porcentaje_fuente)
     
     output_filepath = filepath.replace(".html", "-fix.html")
     with open(output_filepath, 'w', encoding='utf-8') as file:
@@ -66,14 +76,21 @@ def crear_gui():
     """Crea la interfaz gráfica de la aplicación."""
     root = tk.Tk()
     root.title("Mejorador de HTML")
-    root.geometry("400x200")
+    root.geometry("460x250")
     
-    boton_procesar = tk.Button(root, text="Seleccionar archivo HTML", command=procesar_archivo)
+    label_fuente = tk.Label(root, text="Elije el tamaño de la fuente de la tabla (ej: 90%, 100%, etc):")
+    label_fuente.pack(pady=5)
+    
+    entry_fuente = tk.Entry(root)
+    entry_fuente.insert(0, "75%")  # Valor por defecto
+    entry_fuente.pack(pady=5)
+    
+    boton_procesar = tk.Button(root, text="Seleccionar archivo HTML", command=lambda: procesar_archivo(entry_fuente))
     boton_procesar.pack(pady=20)
     
     global resultado_label
     resultado_label = tk.Label(root, text="")
-    resultado_label.pack()
+    resultado_label.pack(pady=10)
     
     root.mainloop()
 
