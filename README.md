@@ -112,6 +112,131 @@ y así sucesivamente siempre debe ir una etiqueta en el código de la caja
 
 Esta es la forma en la que convierto markdowna html para algunas de mis entradas en Blogger. 🚀
 
+# Para hacer al revés y pasar una pagina web a markdown
+Un buen sitio online que convierte html a markdown es:
+
+[https://urltomarkdown.com/](https://urltomarkdown.com/)
+
+me gusta porque en las cajas de código las convierte así:
+
+```
+```
+ejemplo de codigo
+```
+```
+y así es como yo necesito que estén para poderlas convertir con pandoc a html, pero les hace falta algo, la etiqueta, entonces el siguiente es un script con GUI que usa Tkinter que he hecho para eso
+
+Las caracteristicas del **script en Python con GUI usando `tkinter`** son:
+
+✅ Script visual (GUI)  
+✅ Tiene un botón para buscar el archivo `.md`  
+✅ Muestra una lista desplegable (combobox) para elegir el lenguaje (tag), con **bash por defecto** además de otros
+✅ Tiene un botón “Procesar” que aplica el tag elegido a **todos los bloques de código del archivo**  
+✅ Guarda el archivo con el sufijo `-taged.md`
+
+---
+
+El siguiente es el script funcionando en Debian 12:
+
+```python
+import tkinter as tk
+from tkinter import filedialog, ttk, messagebox
+import re
+
+# Etiquetas disponibles
+LANGUAGES = ["bash", "python", "html", "plaintext"]
+
+def process_markdown(content, selected_lang):
+    # Reemplazar todos los bloques de código sin etiqueta por ```lang...
+    pattern = r"```(?:\n|.*\n)([\s\S]*?)```"
+
+    def replace_block(match):
+        code_content = match.group(1).strip()
+        return f"```{selected_lang}\n{code_content}\n```"
+
+    new_content = re.sub(pattern, replace_block, content)
+    return new_content
+
+def open_file():
+    file_path = filedialog.askopenfilename(filetypes=[("Markdown files", "*.md")])
+    if not file_path:
+        return
+    entry_file.delete(0, tk.END)
+    entry_file.insert(0, file_path)
+
+def process_file():
+    file_path = entry_file.get()
+    selected_lang = combo_lang.get()
+
+    if not file_path or not file_path.endswith(".md"):
+        messagebox.showwarning("Entrada inválida", "Por favor selecciona un archivo .md válido.")
+        return
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo leer el archivo:\n{e}")
+        return
+
+    processed_content = process_markdown(content, selected_lang)
+
+    output_path = file_path.replace(".md", "-taged.md")
+
+    try:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(processed_content)
+        messagebox.showinfo("Éxito", f"Archivo guardado como:\n{output_path}")
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo guardar el archivo:\n{e}")
+
+# Crear la ventana principal
+root = tk.Tk()
+root.title("Etiquetador de Bloques de Código Markdown")
+root.geometry("500x200")
+root.resizable(False, False)
+
+# Campo para mostrar la ruta del archivo
+entry_file = tk.Entry(root, width=40)
+entry_file.pack(pady=20)
+
+# Botón para buscar archivo
+btn_browse = tk.Button(root, text="Buscar Archivo .md", command=open_file)
+btn_browse.pack()
+
+# Combobox para elegir el lenguaje
+combo_lang = ttk.Combobox(root, values=LANGUAGES, state="readonly")
+combo_lang.set("bash")
+combo_lang.pack(pady=10)
+
+# Botón para procesar
+btn_process = tk.Button(root, text="Procesar", command=process_file)
+btn_process.pack()
+
+# Iniciar interfaz
+root.mainloop()
+```
+
+---
+
+## Cómo usarlo:
+
+1. Este script `tag_markdown_gui.py`
+2. Ejecútalo desde terminal:
+
+```bash
+python3 tag_markdown_gui.py
+```
+
+3. Usa la interfaz:
+   - Haz clic en **"Buscar Archivo .md"**
+   - Selecciona tu archivo `.md`
+   - Elige el lenguaje (por defecto es `bash`)
+   - Haz clic en **"Procesar"**
+
+Se generará un nuevo archivo con el nombre: `archivo-taged.md`
+
+
 Dios les bendiga
 
 
