@@ -1,4 +1,4 @@
 #! /bin/bash
 
 cd .
-python3 html-fix-GUIv8.py
+python3 gui_html_fixer.py
