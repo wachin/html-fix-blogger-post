@@ -1,6 +1,11 @@
 # El porqué de este script
 
-Estoy usando markdown para escribir mis tutoriales y luego el archivo .md resultante lo convierto a html y lo pego en una entrada de Blogger, pero como las cajas de código tienen una vista no muy bien aceptable y como además las tablas convertidas no tienen los bordes de colores, pues este script sirve para aplicar un fix al archivo html dado por pandoc y que quede bonito
+Estoy usando markdown para escribir mis tutoriales y luego el archivo .md resultante lo convierto a html y lo pego en una entrada de Blogger, pero como:
+- Las cajas de código tienen una vista no muy bien aceptable
+- Las tablas convertidas no tienen los bordes de colores
+- Los elementos `<code>` simples se ven como texto normal
+
+Este script sirve para aplicar un fix al archivo html dado por pandoc y que quede bonito.
 
 # Tutorial de Instalación y Uso de HTML Fixer en Debian
 
@@ -8,7 +13,7 @@ Este tutorial explica cómo instalar las dependencias necesarias y cómo utiliza
 
 ---
 
-## 1. Instalación de Dependencias
+## Instalación de Dependencias
 
 Antes de ejecutar el script, necesitas instalar algunas dependencias necesarias. Para ello, abre una terminal y ejecuta los siguientes comandos:
 
@@ -23,43 +28,109 @@ sudo apt install python3-bs4 python3-tk pandoc git
 
 ---
 
-## 2. Uso de HTML Fixer
+## Previo al uso, ti tenías el archivo en markdown conviertelo a html con pandoc
 
-Puedes utilizar HTML Fixer en dos formas:
-
-### **2.1. Usar la versión CLI (Línea de Comandos)**
-
-#### **Paso 1: Convertir el archivo Markdown a HTML**
+Con mucha frecuencia primero edito mi entrada para Blogger en mardown en mi editor preferido [VNote](https://facilitarelsoftwarelibre.blogspot.com/2025/05/como-descargar-vnote-editor-de-markdown-y-hacerlo-funcionar-en-linux-debian-mx-ubuntu-mint-con-manual.html)
+ 
 Si tienes un archivo Markdown (`archivo.md`), conviértelo a HTML con:
 
 ```sh
 pandoc archivo.md -o archivo.html
 ```
----
 
-### 2 Aplicar el Fix al HTML con la versión GUI (Interfaz Gráfica)
+###  Consejo para aplicar el fix a archivos markdown que no tienen etiquetas en las cajas de código
+Cuando vaya a convertir un markdown que tiene cajas de comandos de terminal asegúrese que tiene la etiqueta de cada código pues sino no se convierte la caja, ejemplo deben estar así:
+
+~~~markdown
+```bash
+sudo apt update
+```
+~~~
+
+o si es algún código en python:
+
+~~~markdown
+```python
+print("Hola, mundo!")
+```
+~~~
+
+y si es sólo texto:
+
+~~~markdown
+```plaintext
+ejemplo de texto en una caja de código
+```
+~~~
+
+
+## Uso de HTML Fixer
+
+Puedes utilizar HTML Fixer en dos formas:
+
+### 1. Aplicar el Fix al HTML con la versión GUI (Interfaz Gráfica)
 
 1. Ejecuta el script GUI con:
 
-   ```sh
-   python3 tkinter_html_fixer.py
-   ```
+```sh
+python3 gui_html_fixer.py
+```
 
-2. Se abrirá una ventana donde podrás seleccionar el archivo `.html` generado con `pandoc`.
-3. Una vez procesado, se guardará automáticamente como `archivo-fix.html`.
-4. El programa mostrará la ubicación del archivo generado.
+2. Se abrirá una ventana donde podrás:
+   - Especificar el tamaño de fuente para las tablas (por defecto 80%)
+   - Seleccionar el archivo `.html` generado con `pandoc`
+   
+3. El script aplicará automáticamente:
+   - Estilos profesionales a bloques de código `<pre class="sourceCode">`
+   - Mejoras visuales a todas las tablas
+   - Formato especial a elementos `<code>` simples
+   - Diseño responsive para todos los elementos
 
-### 3 Aplicar el Fix al HTML desde la terminal de Linux
-Si deseas usar la terminal de Linux ejecuta el script CLI con:
+4. Se guardará automáticamente como `archivo-fix.html`.
+5. El programa mostrará la ubicación del archivo generado.
+
+### Caracteristicas de lo que hace el script
+
+El script realiza las siguientes mejoras visuales:
+
+#### **Para bloques de código (`<pre class="sourceCode">`)**
+- Fondo gris claro con borde lateral rojo
+- Fuente monoespaciada
+- Máximo de altura con scroll
+- Padding y márgenes adecuados
+
+#### **Para elementos `<code>` simples**
+Para código en línea dentro del texto en archivos markdown, ejemplo:
+
+~~~markdown
+`sudo apt update`
+~~~
+
+ese se convertirá a `<code>` en html, y se aplicará lo siguiente:
+
+- Fondo gris muy claro (#f5f5f5)
+- Borde sutil (#d0d0d0)
+- Fuente monoespaciada
+- Color de texto rojizo (#c7254e)
+- Pequeño padding y bordes redondeados
+
+
+#### **Para tablas**
+- Encabezado con fondo rojo claro (#fcebea)
+- Filas alternas (blanco/gris suave)
+- Bordes oscuros (#333333)
+- Texto que se ajusta automáticamente
+- Contenedor responsive con scroll horizontal
+
+
+### **2.5. Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android**
+
+**Para Linux **todo lo que necesita el programa ya está instalado
+
+
+**Para Termux** en Android necesitas lo siguiente si estás en un celular con Android:  [https://github.com/wachin/Instalar-git-en-Android-con-Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux) y luego instala las siguientes dependencias:
 
 ```sh
-python3 cli_html_fixer.py archivo.html
-```
-
-### 4 Aplicar el Fix al HTML desde la terminal de Termux en Android
-Si estás en un celular con Andorid y [estás usando Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux) puedes instalar allí git y las dependencias:
-
-```
 pkg install git pandoc python3
 ```
 
@@ -69,166 +140,87 @@ y luego instalar el paquete beautifulsoup4 con el comando:
 python -m pip install bs4
 ```
 
- y convertir el .md a html ejecutando el script CLI con:
+#### **Modo de uso**:
 
-```sh
+Coloca el archvio `cli_html_fixer.py` donde esté el archivo al que deseas aplicar el fix. Las especificaciones para hacerlo funcionar son las siguientes:
+
+```bash
+python3 cli_html_fixer.py [opciones] archivo.html
+```
+
+   **Opciones disponibles**:
+   - `-o` o `--output`: Especifica el archivo de salida
+   - `-f` o `--font`: Tamaño de fuente para tablas (ej: 90%, 1em)
+   - `-h` o `--help`: Muestra ayuda
+
+ **Ejemplos**:
+   
+Procesar archivo.html y guardar como archivo-fix.html
+
+```bash
 python3 cli_html_fixer.py archivo.html
 ```
 
-Esto generará un archivo `archivo-fix.html` con las mejoras aplicadas.
+Especificar archivo de salida y tamaño de fuente:
+   
+```
+python3 cli_html_fixer.py -o salida.html -f 90% archivo.html
+```
+
+### Características de esta versión CLI:
+- **Ligera**: Optimizada para Termux/Android
+- **Opciones configurables**: Tamaño de fuente y archivo de salida
+- **Manejo de errores**: Informa problemas claramente
+- **Conserva todas las mejoras**: Bloques de código, elementos `<code>` y tablas
+- **Retrocompatible**: Funciona igual que la versión GUI pero desde terminal
+
+El script generará un nuevo archivo con el sufijo `-fix.html` (a menos que especifiques otro nombre con `-o`) con todas las mejoras visuales aplicadas.
+   
+
+### **Recomendaciones adicionales**
+- Puedes usar cualquier editor de texto para escribir en Markdown.
+- `pandoc` permite muchas opciones adicionales para mejorar la conversión de Markdown a HTML.
+- Asegúrate de que el script esté en el mismo directorio donde ejecutas los comandos o proporciona la ruta completa.
+- Para elementos `<code>`, el script no modifica aquellos que ya están dentro de bloques `<pre>` para evitar duplicar estilos.
+
+Esta es la forma en la que convierto markdown a html para algunas de mis entradas en Blogger. 🚀
 
 ---
 
-## 3. Notas Finales
-- Cuando vaya a convertir un markdown que tiene cajas de comandos de terminal asegúrese que tiene la etiqueta de cada codigo pues sino no se convierte la caja, ejemplo deben estar así:
-
-~~~
-```bash
-sudo apt update
-```
-~~~
-
-o si es algún código en python:
-
-~~~
-```python
-print("Hola, mundo!")
-```
-~~~
-
-y si es sólo texto
-
-~~~
-```plaintext
-ejemplo de texto en una caja de código
-```
-~~~
-
-y así sucesivamente siempre debe ir una etiqueta en el código de la caja
-
-- Puedes usar cualquier editor de texto para escribir en Markdown, claro que debes saber Markdown.
-- `pandoc` permite muchas opciones adicionales para mejorar la conversión de Markdown a HTML, puedes averiguar en internet algún arreglo que necesites
-- Asegúrate de que el script esté en el mismo directorio donde ejecutas los comandos o proporciona la ruta completa.
-
-Esta es la forma en la que convierto markdowna html para algunas de mis entradas en Blogger. 🚀
-
-# Para hacer al revés y pasar una pagina web a markdown
+# Para hacer al revés y pasar una página web a markdown
 Un buen sitio online que convierte html a markdown es:
 
 [https://urltomarkdown.com/](https://urltomarkdown.com/)
 
-me gusta porque en las cajas de código las convierte así:
+Me gusta porque en las cajas de código las convierte así:
 
-```
+~~~
 ```
 ejemplo de codigo
 ```
-```
-y así es como yo necesito que estén para poderlas convertir con pandoc a html, pero les hace falta algo, la etiqueta, entonces el siguiente es un script con GUI que usa Tkinter que he hecho para eso
+~~~
+
+y así es como yo necesito que estén para poderlas convertir con pandoc a html, pero les hace falta algo, la etiqueta, entonces el siguiente es un script con GUI que usa Tkinter que he hecho para eso.
+
+## Script para etiquetar bloques de código en Markdown
 
 Las caracteristicas del **script en Python con GUI usando `tkinter`** son:
 
 ✅ Script visual (GUI)  
 ✅ Tiene un botón para buscar el archivo `.md`  
-✅ Muestra una lista desplegable (combobox) para elegir el lenguaje (tag), con **bash por defecto** además de otros
-✅ Tiene un botón “Procesar” que aplica el tag elegido a **todos los bloques de código del archivo**  
+✅ Muestra una lista desplegable (combobox) para elegir el lenguaje (tag), con **bash por defecto** además de otros  
+✅ Tiene un botón "Procesar" que aplica el tag elegido a **todos los bloques de código del archivo**  
 ✅ Guarda el archivo con el sufijo `-taged.md`
 
----
+### Cómo usarlo:
 
-El siguiente es el script funcionando en Debian 12:
-
-```python
-import tkinter as tk
-from tkinter import filedialog, ttk, messagebox
-import re
-
-# Etiquetas disponibles
-LANGUAGES = ["bash", "python", "html", "plaintext"]
-
-def process_markdown(content, selected_lang):
-    # Reemplazar todos los bloques de código sin etiqueta por ```lang...
-    pattern = r"```(?:\n|.*\n)([\s\S]*?)```"
-
-    def replace_block(match):
-        code_content = match.group(1).strip()
-        return f"```{selected_lang}\n{code_content}\n```"
-
-    new_content = re.sub(pattern, replace_block, content)
-    return new_content
-
-def open_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Markdown files", "*.md")])
-    if not file_path:
-        return
-    entry_file.delete(0, tk.END)
-    entry_file.insert(0, file_path)
-
-def process_file():
-    file_path = entry_file.get()
-    selected_lang = combo_lang.get()
-
-    if not file_path or not file_path.endswith(".md"):
-        messagebox.showwarning("Entrada inválida", "Por favor selecciona un archivo .md válido.")
-        return
-
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-    except Exception as e:
-        messagebox.showerror("Error", f"No se pudo leer el archivo:\n{e}")
-        return
-
-    processed_content = process_markdown(content, selected_lang)
-
-    output_path = file_path.replace(".md", "-taged.md")
-
-    try:
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(processed_content)
-        messagebox.showinfo("Éxito", f"Archivo guardado como:\n{output_path}")
-    except Exception as e:
-        messagebox.showerror("Error", f"No se pudo guardar el archivo:\n{e}")
-
-# Crear la ventana principal
-root = tk.Tk()
-root.title("Etiquetador de Bloques de Código Markdown")
-root.geometry("500x200")
-root.resizable(False, False)
-
-# Campo para mostrar la ruta del archivo
-entry_file = tk.Entry(root, width=40)
-entry_file.pack(pady=20)
-
-# Botón para buscar archivo
-btn_browse = tk.Button(root, text="Buscar Archivo .md", command=open_file)
-btn_browse.pack()
-
-# Combobox para elegir el lenguaje
-combo_lang = ttk.Combobox(root, values=LANGUAGES, state="readonly")
-combo_lang.set("bash")
-combo_lang.pack(pady=10)
-
-# Botón para procesar
-btn_process = tk.Button(root, text="Procesar", command=process_file)
-btn_process.pack()
-
-# Iniciar interfaz
-root.mainloop()
-```
-
----
-
-## Cómo usarlo:
-
-1. Este script `tag_markdown_gui.py`
-2. Ejecútalo desde terminal:
+1. Ejecuta el script `tag_markdown_gui.py` desde terminal:
 
 ```bash
 python3 tag_markdown_gui.py
 ```
 
-3. Usa la interfaz:
+2. Usa la interfaz:
    - Haz clic en **"Buscar Archivo .md"**
    - Selecciona tu archivo `.md`
    - Elige el lenguaje (por defecto es `bash`)
@@ -238,6 +230,3 @@ Se generará un nuevo archivo con el nombre: `archivo-taged.md`
 
 
 Dios les bendiga
-
-
-
