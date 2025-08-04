@@ -2,6 +2,27 @@ import tkinter as tk
 from tkinter import filedialog
 from bs4 import BeautifulSoup
 
+def mejorar_elementos_code(html):
+    """
+    Mejora la apariencia de los elementos <code> simples.
+    Aplica un estilo similar al de código pero más simple que los bloques <pre>
+    """
+    soup = BeautifulSoup(html, 'html.parser')
+    
+    for code in soup.find_all('code'):
+        # Si el elemento code no está dentro de un pre (para no duplicar estilos)
+        if not code.find_parent('pre'):
+            code['style'] = (
+                "background: #f5f5f5; "          # Fondo gris muy claro
+                "border: 1px solid #d0d0d0; "    # Borde sutil
+                "border-radius: 3px; "           # Esquinas redondeadas
+                "padding: 1px 4px; "             # Espaciado interno
+                "font-family: 'Courier New', Courier, monospace; "  # Fuente monoespaciada
+                "color: #c7254e; "               # Color de texto rojo oscuro
+                "font-size: 90%; "               # Tamaño ligeramente reducido
+            )
+    return str(soup)
+
 def mejorar_caja_codigo(html):
     """
     Mejora la apariencia de las cajas de código <pre class="sourceCode">.
@@ -81,7 +102,7 @@ def mejorar_tablas(html, porcentaje_fuente):
 def procesar_archivo(entry_fuente):
     """
     Procesa el archivo HTML seleccionado:
-    - Aplica mejoras en cajas de código y tablas
+    - Aplica mejoras en cajas de código, elementos code y tablas
     - Guarda el resultado en un archivo con sufijo '-fix.html'
     """
     porcentaje_fuente = entry_fuente.get().strip()
@@ -95,6 +116,7 @@ def procesar_archivo(entry_fuente):
     with open(filepath, 'r', encoding='utf-8') as file:
         html = file.read()
     
+    html = mejorar_elementos_code(html)
     html = mejorar_caja_codigo(html)
     html = mejorar_tablas(html, porcentaje_fuente)
     
