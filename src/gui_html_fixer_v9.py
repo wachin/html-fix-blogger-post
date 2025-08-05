@@ -17,7 +17,7 @@ def mejorar_elementos_code(html):
                 "border: 1px solid #d0d0d0; "    # Borde sutil
                 "border-radius: 3px; "           # Esquinas redondeadas
                 "padding: 1px 4px; "             # Espaciado interno
-                "font-family: 'Ubuntu Mono', Consolas, monospace; font-weight: bold; "  # Fuente monoespaciada principal Ubuntu, luego Consolas
+                "font-family: 'Ubuntu Mono', Consolas, monospace; "  # Fuente monoespaciada principal Ubuntu, luego Consolas
                 "color: #c7254e; "               # Color de texto rojo oscuro
                 "font-size: 90%; "               # Tamaño ligeramente reducido
             )
@@ -141,7 +141,7 @@ def crear_gui():
     label_fuente.pack(pady=5)
     
     entry_fuente = tk.Entry(root)
-    entry_fuente.insert(0, "95%")  # Valor por defecto
+    entry_fuente.insert(0, "80%")  # Valor por defecto
     entry_fuente.pack(pady=5)
     
     boton_procesar = tk.Button(root, text="Seleccionar archivo HTML", command=lambda: procesar_archivo(entry_fuente))
