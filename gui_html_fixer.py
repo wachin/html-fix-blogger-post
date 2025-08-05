@@ -17,7 +17,7 @@ def mejorar_elementos_code(html):
                 "border: 1px solid #d0d0d0; "    # Borde sutil
                 "border-radius: 3px; "           # Esquinas redondeadas
                 "padding: 1px 4px; "             # Espaciado interno
-                "font-family: 'Courier New', Courier, monospace; "  # Fuente monoespaciada
+                "font-family: 'Ubuntu Mono', Consolas, monospace; "  # Fuente monoespaciada principal Ubuntu, luego Consolas
                 "color: #c7254e; "               # Color de texto rojo oscuro
                 "font-size: 90%; "               # Tamaño ligeramente reducido
             )
@@ -37,7 +37,7 @@ def mejorar_caja_codigo(html):
             "border-color: rgb(214, 73, 55); "     # Borde lateral izquierdo (rojo)
             "border-style: solid; "
             "border-width: 1px 1px 1px 20px; "
-            "font-family: 'Ubuntu Mono', Courier, monospace; "
+            "font-family: 'Ubuntu Mono', Consolas, monospace; "  # Fuente monoespaciada principal Ubuntu, luego Consolas
             "font-size: medium; line-height: 22.4px; "
             "margin: 10px; max-height: 500px; overflow: auto; "
             "padding: 28px 10px 10px 20px; z-index: 10000;"
