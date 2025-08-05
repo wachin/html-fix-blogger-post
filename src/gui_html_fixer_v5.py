@@ -100,19 +100,11 @@ def mejorar_tablas(html, porcentaje_fuente):
         
         for i, row in enumerate(table.find_all('tr')):
             if i == 0:
-                # Estilo para la primera fila: fondo negro, texto blanco
-                row['style'] = (
-                    "background-color: black; "
-                    "color: white; "
-                    "font-weight: bold; "  # Texto en negrita para mejor visibilidad
-                    "padding: 8px; "
-                )
+                row['style'] = "background-color: #eaecf0ff;"
             elif i % 2 == 1:
-                # Filas impares
                 row['style'] = "background-color: #ffffffff;"
             else:
-                # Filas pares
-                row['style'] = "background-color: #e6e6e6;"
+                row['style'] = "background-color: #eff0ffff;"
         
         for th in table.find_all('th'):
             th['style'] = "border: 1px solid black; padding: 8px; text-align: left;"
