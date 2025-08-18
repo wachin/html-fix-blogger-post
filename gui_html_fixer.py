@@ -160,8 +160,7 @@ def mejorar_bloques_code_simples(html):
             # Creamos el span para el contenido con mejor contraste
             span_outer = soup.new_tag('span', style=(
                 "color: #222222; "  # Color casi negro para mejor contraste
-                "font-family: 'Ubuntu Mono', 'Courier New', monospace; "
-                "font-weight: bold; "  # Fuente en negrita
+                "font-family: 'Ubuntu Mono', 'Courier New', monospace; " # desabilito: "font-weight: bold; "  # Fuente en negrita
             ))
             
             span_inner = soup.new_tag('span', style=(
