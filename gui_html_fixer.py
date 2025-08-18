@@ -25,6 +25,7 @@ def mejorar_elementos_code(html):
 
 def mejorar_caja_codigo(html):
     """
+    Caja de codigo negra, con botones con el color de la bandera del Ecuador
     Mejora la apariencia de las cajas de código <pre class="sourceCode">.
     Versión ajustada sin separación entre la barra y el contenido.
     """
@@ -66,7 +67,7 @@ def mejorar_caja_codigo(html):
         ))
         
         # Puntos de la barra de terminal
-        for color in ['#ff5f56', '#ffbd2e', '#27c93f']:
+        for color in ['#FAD510', '#0066CC', '#CE1126']:
             dot = soup.new_tag('span', style=(
                 f"background: {color}; "
                 "width: 12px; "
