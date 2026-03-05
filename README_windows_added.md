@@ -461,7 +461,7 @@ archivo-fix.html
 
 ---
 
-## Resultado final
+## 🎯 Resultado final
 
 Con este flujo obtienes:
 
