@@ -188,11 +188,11 @@ python3 gui_html_fixer.py
 
 5. El programa mostrará la ubicación del archivo generado.
 
-### Caracteristicas de lo que hace el script
+## Caracteristicas de lo que hace el script
 
 El script realiza las siguientes mejoras visuales:
 
-#### **Para bloques de código (`<pre class="sourceCode">`)**
+### **Para bloques de código (`<pre class="sourceCode">`)**
 
 - Fondo gris claro con borde lateral rojo
 - Fuente monoespaciada
@@ -200,7 +200,8 @@ El script realiza las siguientes mejoras visuales:
 - Padding y márgenes adecuados
 - Tiene un botón para copiar el código
 
-#### **Para elementos `<code>` simples**
+### **Para elementos `<code>` simples**
+
 Para código en línea dentro del texto en archivos markdown, ejemplo:
 
 ~~~
@@ -216,7 +217,7 @@ ese se convertirá a `<code>` en html, y se aplicará lo siguiente:
 - Pequeño padding y bordes redondeados
 
 
-#### **Para tablas**
+### **Para tablas**
 
 - Encabezado con fondo negro y texto blanco
 - Filas alternas (blanco / gris claro)
@@ -225,10 +226,13 @@ ese se convertirá a `<code>` en html, y se aplicará lo siguiente:
 - Contenedor responsive con scroll horizontal
 
 
-### **2.5. Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android**
+## Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android con `cli_html_fixer.py`
+
+### Requisitos para Linux
 
 **Para Linux **todo lo que necesita el programa ya está instalado
 
+### Requisitos para Termux
 
 **Para Termux** en Android necesitas lo siguiente si estás en un celular con Android:  [https://github.com/wachin/Instalar-git-en-Android-con-Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux) y luego instala las siguientes dependencias:
 

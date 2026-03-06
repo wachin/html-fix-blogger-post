@@ -84,15 +84,16 @@ def mejorar_caja_codigo(html):
             "title": "Copiar código",
             "aria-label": "Copiar código",
             "style": (
-                "margin-left:auto; "
-                "background: rgba(255,255,255,0.10); "
-                "border: 1px solid rgba(255,255,255,0.18); "
-                "color: #fff; "
-                "border-radius: 6px; "
-                "padding: 4px 10px; "
-                "font-size: 12px; "
-                "font-weight: 700; "
-                "cursor: pointer;"
+                "margin-left:auto;"
+                "background:rgba(255,255,255,0.10);"
+                "border:1px solid rgba(255,255,255,0.18);"
+                "color:#fff;"
+                "border-radius:6px;"
+                "padding:3px 10px;"
+                "font-size:12px;"
+                "font-weight:700;"
+                "cursor:pointer;"
+                "line-height:1;"
             )
         })
         copy_btn.string = "Copiar"
