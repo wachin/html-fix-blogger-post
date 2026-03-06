@@ -192,13 +192,56 @@ python3 gui_html_fixer.py
 
 El script realiza las siguientes mejoras visuales:
 
-### **Para bloques de código (`<pre class="sourceCode">`)**
+### **Para bloques de código del método `def mejorar_caja_codigo(html):`
 
-- Fondo gris claro con borde lateral rojo
-- Fuente monoespaciada
-- Máximo de altura con scroll
-- Padding y márgenes adecuados
-- Tiene un botón para copiar el código
+El script convierte las cajas de código que en markdown si tenían tag, ejemplo, esto:
+
+```bash
+sudo apt install kate
+```
+
+con pandoc lo convierto en esto:
+
+```html
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install kate</span></code></pre></div>
+```
+
+y con el script (con el método `def mejorar_caja_codigo(html):`) se convierte en esto:
+
+```html
+<div class="sourceCode" id="cb1"><div style="margin: 15px 0; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"><div style="background: #3a3a3a; height: 28px; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #2a2a2a; "><span style="background: #FAD510; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; "></span><span style="background: #0066CC; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; "></span><span style="background: #CE1126; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; "></span><button aria-label="Copiar código" class="code-copy-btn" style="margin-left:auto;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;line-height:1;" title="Copiar código" type="button">Copiar</button></div><pre class="sourceCode bash" style="background: #1e1e1e; color: #f0f0f0; font-family: 'Ubuntu Mono', 'Courier New', monospace; font-weight: bold; font-size: 14px; line-height: 1.5; margin: 0; padding: 12px 20px; border-left: 4px solid #3aa655; overflow: auto; max-height: 500px; "><code class="sourceCode bash" style="color: inherit; font-family: inherit;"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="fu">sudo</span> apt install kate</span></code></pre></div></div>
+```
+
+y esto se ve así:
+
+![](vx_images/caja-de-codigo-sourceCode.png)
+
+
+### Para bloques de código del método `def mejorar_bloques_code_simples(html):`
+
+El script convierte las cajas de código que en markdown no tenían tag, ejemplo, esto:
+
+```
+Ejecutar como administrador
+```
+
+con pandoc lo convierto en esto:
+
+```html
+<pre><code>Ejecutar como administrador</code></pre>
+```
+
+y con el script (con el método `def mejorar_bloques_code_simples(html):`) se convierte en esto:
+
+```html
+<div><pre style="background-color: #f8f8f8; border: 1px solid #d0d0d0; border-left: 6px solid #d44950; line-height: 1.5; margin: 10px 0; overflow-x: auto; padding: 10px; border-radius: 4px; "><span style="color: #000000; font-family: 'Ubuntu Mono', Consolas, monospace; "><span style="font-size: 15px; white-space: pre; ">Ejecutar como administrador</span></span></pre></div>
+```
+
+y queda así:
+
+![](vx_images/caja-de-codigo-code.png)
+
 
 ### **Para elementos `<code>` simples**
 
