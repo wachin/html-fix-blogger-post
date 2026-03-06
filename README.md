@@ -93,7 +93,7 @@ Este script también funciona en **Windows** siempre que tengas **Python instala
 
 Descarga Python desde:
 
-https://www.python.org/downloads/
+[https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 Durante la instalación **activa la opción**:
 
@@ -188,18 +188,18 @@ python3 gui_html_fixer.py
 
 5. El programa mostrará la ubicación del archivo generado.
 
-### Caracteristicas de lo que hace el script
+# Caracteristicas de lo que hace el script
 
 El script realiza las siguientes mejoras visuales:
 
-#### **Para bloques de código (`<pre class="sourceCode">`)**
+## **Para bloques de código (`<pre class="sourceCode">`)**
 
 - Fondo gris claro con borde lateral rojo
 - Fuente monoespaciada
 - Máximo de altura con scroll
 - Padding y márgenes adecuados
 
-#### **Para elementos `<code>` simples**
+## **Para elementos `<code>` simples**
 Para código en línea dentro del texto en archivos markdown, ejemplo:
 
 ~~~
