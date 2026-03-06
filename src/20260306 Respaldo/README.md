@@ -637,11 +637,6 @@ Abre tu archivo de tema y pega el siguiente código **antes de `</body>`**:
 
 ```html
 <!-- Script para botón Copiar en cajas de código -->
-// Compatible con la estructura generada por gui_html_fixer.py
-// div.code-container
-//   ├─ div.code-bar
-//   │    └─ button.code-copy-btn
-//   └─ pre.sourceCode
 <script>
 //<![CDATA[
 (function () {
@@ -663,39 +658,29 @@ Abre tu archivo de tema y pega el siguiente código **antes de `</body>`**:
     ta.style.top = "-9999px";
     document.body.appendChild(ta);
     ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-
-    let ok = false;
-    try {
-      ok = document.execCommand("copy");
-    } finally {
-      document.body.removeChild(ta);
-    }
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
     return ok;
   }
 
-  document.addEventListener("click", async function (ev) {
+  document.addEventListener("click", async (ev) => {
     const btn = ev.target.closest(".code-copy-btn");
     if (!btn) return;
 
-    const bar = btn.parentElement;
-    const container = bar ? bar.parentElement : null;
-    const pre = container ? container.querySelector("pre.sourceCode, pre") : null;
+    const container = btn.closest("div");
+    const pre = container ? container.querySelector("pre") : null;
     if (!pre) return;
 
     const text = getCodeText(pre);
-    const old = btn.textContent;
 
+    const old = btn.textContent;
     try {
-      const ok = await copyText(text);
-      btn.textContent = ok ? "¡Copiado!" : "Error";
+      await copyText(text);
+      btn.textContent = "¡Copiado!";
     } catch (e) {
       btn.textContent = "Error";
     }
-
-    setTimeout(function () {
-      btn.textContent = old;
-    }, 1200);
+    setTimeout(() => (btn.textContent = old), 1200);
   });
 })();
 //]]>
