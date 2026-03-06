@@ -175,23 +175,23 @@ def mejorar_bloques_code_simples(html):
             pre['style'] = (
                 "background-color: #f8f8f8; "  # Fondo más claro para mejor contraste
                 "border: 1px solid #d0d0d0; "  # Borde sólido en lugar de dashed
-                "border-left: 3px solid #d44950; "  # Borde izquierdo acentuado
+                "border-left: 6px solid #d44950; "  # Borde rojo izquierdo acentuado, 6px de grueso
                 "line-height: 1.5; "  # Mejor espaciado entre líneas
                 "margin: 10px 0; "  # Margen más equilibrado
-                "overflow-wrap: break-word; "
+                "overflow-x: auto; "
                 "padding: 10px; "  # Más padding para mejor legibilidad
                 "border-radius: 4px; "  # Esquinas ligeramente redondeadas
             )
             
             # Creamos el span para el contenido con mejor contraste
             span_outer = soup.new_tag('span', style=(
-                "color: #222222; "  # Color casi negro para mejor contraste
-                "font-family: 'Ubuntu Mono', 'Courier New', monospace; " # desabilito: "font-weight: bold; "  # Fuente en negrita
+                "color: #000000; "  # Color de las fuentes de los textos en el bloque de código, en negro para mejor contraste
+                "font-family: 'Ubuntu Mono', Consolas, monospace; " # Tipo de fuente de los bloques de código
             ))
             
             span_inner = soup.new_tag('span', style=(
                 "font-size: 15px; "  # Tamaño ligeramente mayor
-                "white-space: pre-wrap; "
+                "white-space: pre; " # Antes estaba pre-wrap;
             ))
             
             # Movemos el contenido del code al span interno
