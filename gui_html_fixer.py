@@ -155,8 +155,12 @@ def mejorar_tablas(html, porcentaje_fuente):
 
 def mejorar_bloques_code_simples(html):
     """
-    Mejora la apariencia de los bloques <pre><code> simples que no tienen clase sourceCode.
-    Versión mejorada con mejor contraste y legibilidad.
+    Mejora la apariencia de los bloques <pre><code> simples que no tienen clase sourceCode. Los que
+    vienen de la conversión de bloques de códog markdown sin tag, ejemplo:
+    ```
+    sudo apt update
+    ```
+    Esta es la versión mejorada con mejor contraste y legibilidad.
     """
     soup = BeautifulSoup(html, 'html.parser')
     
