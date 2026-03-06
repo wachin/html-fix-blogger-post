@@ -192,7 +192,7 @@ python3 gui_html_fixer.py
 
 El script realiza las siguientes mejoras visuales:
 
-### **Para bloques de código del método `def mejorar_caja_codigo(html):`
+### Para bloques de código del método `def mejorar_caja_codigo(html):`
 
 El script convierte las cajas de código que en markdown si tenían tag, ejemplo, esto:
 
