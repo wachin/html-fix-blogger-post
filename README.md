@@ -198,6 +198,7 @@ El script realiza las siguientes mejoras visuales:
 - Fuente monoespaciada
 - Máximo de altura con scroll
 - Padding y márgenes adecuados
+- Tiene un botón para copiar el código
 
 #### **Para elementos `<code>` simples**
 Para código en línea dentro del texto en archivos markdown, ejemplo:
@@ -519,7 +520,7 @@ Características:
 - Ideal para automatizar flujos de trabajo
 - Compatible con Linux, Windows y Termux
 - Permite especificar archivo de salida y tamaño de fuente
-- Tamaño de fuente por defecto: **80%**
+- Tamaño de fuente por defecto: **95%**
 
 Ejemplo:
 
