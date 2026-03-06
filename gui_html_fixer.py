@@ -76,6 +76,27 @@ def mejorar_caja_codigo(html):
                 "margin-right: 8px; "
             ))
             terminal_bar.append(dot)
+                        
+        # --- Botón "Copiar" ---
+        copy_btn = soup.new_tag('button', attrs={
+            "type": "button",
+            "class": "code-copy-btn",
+            "title": "Copiar código",
+            "aria-label": "Copiar código",
+            "style": (
+                "margin-left:auto; "
+                "background: rgba(255,255,255,0.10); "
+                "border: 1px solid rgba(255,255,255,0.18); "
+                "color: #fff; "
+                "border-radius: 6px; "
+                "padding: 4px 10px; "
+                "font-size: 12px; "
+                "font-weight: 700; "
+                "cursor: pointer;"
+            )
+        })
+        copy_btn.string = "Copiar"
+        terminal_bar.append(copy_btn)
         
         # Insertamos la barra antes del pre dentro del contenedor
         container.insert(0, terminal_bar)
