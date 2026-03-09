@@ -113,12 +113,11 @@ def mejorar_tablas(html, porcentaje_fuente):
     soup = BeautifulSoup(html, 'html.parser')
 
     for table in soup.find_all('table'):
-
         estilo_tabla = (
             "border-collapse: collapse; "
-            "width: max-content; "
-            "min-width: 100%; "
+            "width: 100%; "
             "background-color: #ffffff; "
+            "table-layout: auto; "
         )
 
         if porcentaje_fuente:
@@ -126,7 +125,6 @@ def mejorar_tablas(html, porcentaje_fuente):
 
         table['style'] = estilo_tabla
 
-        # Filas
         for i, row in enumerate(table.find_all('tr')):
             if i == 0:
                 row['style'] = (
@@ -139,17 +137,18 @@ def mejorar_tablas(html, porcentaje_fuente):
             else:
                 row['style'] = "background-color: #f5f5f5;"
 
-        # Cabeceras
         for th in table.find_all('th'):
             th['style'] = (
                 "border: 1px solid #cfcfcf; "
                 "padding: 14px 16px; "
                 "text-align: left; "
                 "vertical-align: top; "
-                "white-space: normal;"
+                "white-space: normal; "
+                "overflow-wrap: break-word; "
+                "word-break: normal; "
+                "max-width: 220px;"
             )
 
-        # Celdas
         for td in table.find_all('td'):
             td['style'] = (
                 "border: 1px solid #cfcfcf; "
@@ -157,10 +156,12 @@ def mejorar_tablas(html, porcentaje_fuente):
                 "text-align: left; "
                 "vertical-align: top; "
                 "white-space: normal; "
-                "line-height: 1.55;"
+                "overflow-wrap: break-word; "
+                "word-break: normal; "
+                "line-height: 1.55; "
+                "max-width: 220px;"
             )
 
-        # Contenedor con scroll horizontal
         wrapper = soup.new_tag(
             'div',
             attrs={
@@ -235,27 +236,31 @@ def mejorar_bloques_code_simples(html):
     return str(soup)
 
 def procesar_archivo(entry_fuente):
+    """
+    Procesa el archivo HTML seleccionado:
+    - Aplica mejoras en cajas de código, elementos code y tablas
+    - Guarda el resultado en un archivo con sufijo '-fix.html'
+    """
     porcentaje_fuente = entry_fuente.get().strip()
     if porcentaje_fuente and not porcentaje_fuente.endswith('%'):
         porcentaje_fuente += '%'
-
+    
     filepath = filedialog.askopenfilename(filetypes=[("Archivos HTML", "*.html")])
     if not filepath:
         return
-
+    
     with open(filepath, 'r', encoding='utf-8') as file:
         html = file.read()
-
+    
     html = mejorar_elementos_code(html)
     html = mejorar_caja_codigo(html)
     html = mejorar_tablas(html, porcentaje_fuente)
-    html = mejorar_bloques_code_simples(html)
-
+    html = mejorar_bloques_code_simples(html)  # <-- Nueva función añadida
+    
     output_filepath = filepath.replace(".html", "-fix.html")
-
     with open(output_filepath, 'w', encoding='utf-8') as file:
         file.write(html)
-
+    
     resultado_label.config(text=f"Archivo guardado en: {output_filepath}")
 
 def crear_gui():
