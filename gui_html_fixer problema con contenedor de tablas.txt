@@ -1,0 +1,14 @@
+
+
+corrige las tablas para que no usen <pre> como contenedor;
+
+En los archivos que procesa este script aparecen dos tablas metidas dentro de un <pre>, así:
+
+<pre class="table-code-box" ...><table ...> ... </table></pre> 
+
+The Effects of Kefir on the..-f…
+
+Ese patrón es el sospechoso principal. En HTML, un <pre> no está pensado para envolver una <table>. Blogger a veces tolera HTML “raro” dentro de una entrada individual, pero en la página principal o en páginas de archivo/búsqueda, donde tiene que renderizar varias entradas una tras otra, ese HTML mal formado puede romper la estructura visual y hacer que parezca que las demás entradas “desaparecen”.
+
+
+en la solución conserva overflow-x: auto; para que se deslice horizontalmente
