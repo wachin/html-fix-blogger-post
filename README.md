@@ -704,13 +704,59 @@ Abre tu archivo de tema y pega el siguiente código **antes de `</body>`**:
 
 ---
 
-## Resultado
+# ✨ Mejora opcional: tablas más compactas (tipo documentos científicos)
 
-Después de aplicar estas modificaciones:
+Si deseas que las tablas se vean **más compactas y profesionales**, como en artículos científicos (menos espacio entre filas), puedes ajustar el *padding* y el *line-height* en el script.
 
-- Cada bloque de código tendrá un botón **Copiar**
-- El código se copiará directamente al portapapeles
-- No se necesitan librerías externas
-- Todo funciona desde el tema de Blogger
+## 🔧 Ajuste recomendado (compacto)
 
-Esto mejora mucho la experiencia para los lectores de tutoriales técnicos.
+En la función `mejorar_tablas()` cambia:
+
+```python
+padding: 14px 16px;
+line-height: 1.55;
+```
+
+por:
+
+```python
+padding: 6px 12px;
+line-height: 1.2;
+```
+
+Esto hará que:
+
+* Las filas queden más juntas
+* Se aproveche mejor el espacio en pantalla
+* Las tablas se vean más “densas” y profesionales
+
+---
+
+## 🔬 Ajuste más compacto (opcional)
+
+Si quieres un estilo **aún más compacto**, puedes usar:
+
+```python
+padding: 4px 10px;
+line-height: 1.1;
+```
+
+Este estilo es ideal cuando:
+
+* Estás imprimiendo documentos (A4 en dos columnas)
+* Tienes tablas largas
+* Quieres ahorrar espacio vertical
+
+---
+
+## ⚖️ Recomendación
+
+* 📄 **Para blog / lectura cómoda** → usa `6px 12px` y `1.2`
+* 📚 **Para impresión o documentos densos** → usa `4px 10px` y `1.1`
+
+---
+
+Pero reducir demasiado el padding puede afectar la legibilidad, especialmente en móviles.
+Por eso se recomienda probar ambos estilos según el tipo de contenido.
+
+---
