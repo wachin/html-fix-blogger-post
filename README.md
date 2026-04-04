@@ -1,4 +1,4 @@
-# El porqué de este script
+# Blogger HTML Fixer + botones en las cajas de código
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20Termux-informational.svg)](#)
@@ -276,9 +276,34 @@ ese se convertirá a `<code>` en html, y se aplicará lo siguiente:
 
 ## Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android con `cli_html_fixer.py`
 
-### Requisitos para Linux
+---
 
-**Para Linux **todo lo que necesita el programa ya está instalado
+# Requisitos para Linux
+
+
+## Debian
+
+Poner en la terminal:
+
+```bash
+sudo apt install python3-bs4
+```
+
+Presente desde bullseye
+[packages.debian.org/python3-bs4](packages.debian.org/python3-bs4)
+
+## Ubuntu
+Presente en resolute
+
+```bash
+sudo apt install python3-bs4
+```
+
+revisar en
+
+[packages.ubuntu.com/python3-bs4](packages.ubuntu.com/python3-bs4)
+
+---
 
 ### Requisitos para Termux
 
