@@ -8,6 +8,7 @@ from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QStandardPaths, QSi
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QApplication,
+    QMainWindow,
     QWidget,
     QLabel,
     QLineEdit,
@@ -392,7 +393,7 @@ def mejorar_bloques_code_simples(html):
 # INTERFAZ
 # ============================================================
 
-class HtmlFixerApp(QWidget):
+class HtmlFixerApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -470,6 +471,18 @@ class HtmlFixerApp(QWidget):
             print(f"Ruta de traducciones: {translations_path}")
 
     def init_ui(self):
+        # Barra superior debajo de la barra de título
+        self.toolbar = QToolBar("Barra principal")
+        self.toolbar.setMovable(False)
+        self.toolbar.setFloatable(False)
+        self.addToolBar(self.toolbar)
+
+        self.boton_acerca_de = QPushButton("Acerca de...")
+        self.boton_acerca_de.clicked.connect(self.mostrar_acerca_de)
+        self.toolbar.addWidget(self.boton_acerca_de)
+
+        # Widget central
+        central_widget = QWidget()
         layout = QVBoxLayout()
 
         self.label_fuente = QLabel(
@@ -485,10 +498,6 @@ class HtmlFixerApp(QWidget):
         self.boton_procesar.clicked.connect(self.procesar_archivo)
         layout.addWidget(self.boton_procesar)
 
-        self.boton_acerca_de = QPushButton("Acerca de...")
-        self.boton_acerca_de.clicked.connect(self.mostrar_acerca_de)
-        layout.addWidget(self.boton_acerca_de)
-
         self.resultado_label = QLabel("")
         self.resultado_label.setWordWrap(True)
         layout.addWidget(self.resultado_label)
@@ -499,7 +508,8 @@ class HtmlFixerApp(QWidget):
         self.info_config_label.setWordWrap(True)
         layout.addWidget(self.info_config_label)
 
-        self.setLayout(layout)
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
 
     def normalizar_porcentaje_fuente(self, texto):
         """
