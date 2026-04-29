@@ -1,4 +1,4 @@
-# Blogger HTML Fixer + botones en las cajas de código
+# Blogger HTML Fixer en Cajas de código, Tablas, y Botón Copiar
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20Termux-informational.svg)](#)
@@ -36,18 +36,28 @@ Este tutorial explica cómo instalar las dependencias necesarias y cómo utiliza
 
 ---
 
-## Instalación de Dependencias
+# Requisitos para Linux
+
+## Debian, Ubuntu
 
 Antes de ejecutar el script, necesitas instalar algunas dependencias necesarias. Para ello, abre una terminal y ejecuta los siguientes comandos:
 
 ```sh
 sudo apt update
-sudo apt install python3-bs4 python3-tk pandoc git
+sudo apt install python3-bs4 python3-pyqt6 pandoc git
 ```
 
 - `python3-bs4`: Instala BeautifulSoup4 para manipulación de HTML.
 - `python3-pyqt6`: Instala PyQt6 para la versión con GUI.
 - `pandoc`: Convierte archivos Markdown a HTML.
+
+Revisar los paquetes disponibles en:
+
+**Presente desde bullseye**  
+[packages.debian.org/python3-bs4](packages.debian.org/python3-bs4)
+
+**Ubuntu** 
+[packages.ubuntu.com/python3-bs4](packages.ubuntu.com/python3-bs4)
 
 ---
 
@@ -122,7 +132,7 @@ entonces Python está correctamente instalado.
 
 ---
 
-## 2. Instalar la dependencia BeautifulSoup
+## 2. Instalar la dependencia en Windows
 
 Este script necesita la librería **BeautifulSoup4** y **PyQt6**.
 
@@ -254,6 +264,156 @@ y queda así:
 
 es una caja de código simple que sirve para describir cosas
 
+## Solución para la caja simple en Blogger evitando que se pierda su borde rojo
+
+### ❗ Problema
+
+Cuando se publica el HTML generado por este programa en **Blogger**, las cajas de código simples (`<pre><code>`) se muestran correctamente al inicio.
+
+Sin embargo, al editar la entrada en:
+
+> ✏️ **Vista de redacción (modo visual)**
+
+Blogger modifica el HTML interno y puede eliminar o alterar estilos como:
+
+```css
+border-left
+```
+
+Esto provoca que se pierda el **borde izquierdo rojo** que está así:
+
+![](vx_images/Barra-de-código-simple-con-borde-izquierdo-rojo.png)
+
+afectando el diseño visual de las cajas de código quedando así:
+
+![](vx_images/Barra-de-código-simple-sin-borde-izquierdo-rojo.png)
+
+### ✅ Solución
+
+La solución consiste en usar una combinación de:
+
+* una **clase CSS (`simple-code-box`)**
+* estilos con `!important`
+* y un **`box-shadow` interno** que reemplaza el borde
+
+### Paso 1: Añadir CSS en el tema de Blogger
+
+En Blogger ir a:
+
+```
+Tema → Personalizar → Avanzado → Añadir CSS
+```
+
+y añadir el siguiente código:
+
+```css
+/* ============================================================
+   ESTILO PARA CAJAS DE CÓDIGO SIMPLES EN BLOGGER
+   ------------------------------------------------------------
+   Este bloque corrige un problema de Blogger:
+   cuando se edita en "Vista de redacción", Blogger elimina o
+   altera algunos estilos como border-left.
+
+   Para evitar perder la línea roja izquierda, usamos:
+   - border-left (estético, pero no confiable)
+   - box-shadow (solución robusta que Blogger respeta mejor)
+   - !important para evitar que Blogger sobrescriba estilos
+   ============================================================ */
+
+.post-body pre.simple-code-box,
+pre.simple-code-box,
+.simple-code-box {
+
+  /* Fondo claro de la caja */
+  background-color: #f8f8f8 !important;
+
+  /* Borde general gris */
+  border: 1px solid #d0d0d0 !important;
+
+  /* Línea roja izquierda (versión fina, decorativa) */
+  border-left: 1px solid #d44950 !important;
+
+  /* ============================================================
+     LÍNEA ROJA PRINCIPAL (IMPORTANTE)
+     ------------------------------------------------------------
+     Este box-shadow crea una línea interna roja a la izquierda.
+     Es la solución REAL al problema de Blogger, porque:
+     - Blogger puede eliminar border-left
+     - pero normalmente NO elimina box-shadow
+
+     Resultado: la línea roja se mantiene incluso después de editar
+     ============================================================ */
+  box-shadow: inset 6px 0 0 #d44950 !important;
+
+  /* Espaciado y legibilidad */
+  line-height: 1.5 !important;
+  margin: 10px 0 !important;
+
+  /* Scroll horizontal si el código es largo */
+  overflow-x: auto !important;
+
+  /* Padding: más espacio a la izquierda para que no se pegue al borde rojo */
+  padding: 10px 10px 10px 14px !important;
+
+  /* Bordes redondeados */
+  border-radius: 4px !important;
+}
+
+/* ============================================================
+   ESTILO DEL TEXTO DENTRO DEL BLOQUE DE CÓDIGO
+   ============================================================ */
+
+.post-body pre.simple-code-box span,
+pre.simple-code-box span,
+.simple-code-box span {
+
+  /* Color del texto */
+  color: #000000 !important;
+
+  /* Fuente monoespaciada para código */
+  font-family: 'Ubuntu Mono', Consolas, monospace !important;
+
+  /* Tamaño del texto */
+  font-size: 15px !important;
+
+  /* Mantiene saltos de línea y formato original */
+  white-space: pre !important;
+}
+```
+
+---
+
+### Explicación técnica
+
+* Blogger **reescribe el HTML** cuando se usa el editor visual.
+* Esto puede eliminar estilos inline como `border-left`.
+* El `box-shadow` no suele ser eliminado por Blogger.
+* Por eso se usa como alternativa para crear la línea izquierda.
+
+---
+
+### Personalización
+
+Puedes cambiar el grosor de la línea roja modificando:
+
+```css
+box-shadow: inset 3px 0 0 #d44950;
+```
+
+Ejemplo:
+
+```css
+box-shadow: inset 2px 0 0 #d44950;
+```
+
+### 🚀 Resultado
+
+Con esta solución:
+
+* Las cajas de código simple mantienen su estilo
+* El borde izquierdo rojo no desaparece
+* La apariencia es consistente incluso después de editar
+
 ---
 
 ## **Para elementos `<code>` simples**
@@ -335,25 +495,6 @@ Por eso se recomienda probar ambos estilos según el tipo de contenido.
 
 ## Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android con `cli_html_fixer.py`
 
----
-
-# Requisitos para Linux
-
-## Debian, Ubuntu
-
-Poner en la terminal:
-
-```bash
-sudo apt install python3-bs4
-```
-
-Revisar los paquetes disponibles en:
-
-**Presente desde bullseye**  
-[packages.debian.org/python3-bs4](packages.debian.org/python3-bs4)
-
-**Ubuntu ** 
-[packages.ubuntu.com/python3-bs4](packages.ubuntu.com/python3-bs4)
 
 ---
 
@@ -786,152 +927,5 @@ y con esto queda añadido el script para que en cada publicación donde se use e
 ---
 
 
-## 🛠️ Solución para Blogger (muy importante)
 
-### ❗ Problema
 
-Cuando se publica el HTML generado por este programa en **Blogger**, las cajas de código simples (`<pre><code>`) se muestran correctamente al inicio.
-
-Sin embargo, al editar la entrada en:
-
-> ✏️ **Vista de redacción (modo visual)**
-
-Blogger modifica el HTML interno y puede eliminar o alterar estilos como:
-
-```css
-border-left
-```
-
-Esto provoca que se pierda el **borde izquierdo rojo** que está así:
-
-![](vx_images/Barra-de-código-simple-con-borde-izquierdo-rojo.png)
-
-afectando el diseño visual de las cajas de código quedando así:
-
-![](vx_images/Barra-de-código-simple-sin-borde-izquierdo-rojo.png)
-
-### ✅ Solución
-
-La solución consiste en usar una combinación de:
-
-* una **clase CSS (`simple-code-box`)**
-* estilos con `!important`
-* y un **`box-shadow` interno** que reemplaza el borde
-
-### Paso 1: Añadir CSS en el tema de Blogger
-
-En Blogger ir a:
-
-```
-Tema → Personalizar → Avanzado → Añadir CSS
-```
-
-y añadir el siguiente código:
-
-```css
-/* ============================================================
-   ESTILO PARA CAJAS DE CÓDIGO SIMPLES EN BLOGGER
-   ------------------------------------------------------------
-   Este bloque corrige un problema de Blogger:
-   cuando se edita en "Vista de redacción", Blogger elimina o
-   altera algunos estilos como border-left.
-
-   Para evitar perder la línea roja izquierda, usamos:
-   - border-left (estético, pero no confiable)
-   - box-shadow (solución robusta que Blogger respeta mejor)
-   - !important para evitar que Blogger sobrescriba estilos
-   ============================================================ */
-
-.post-body pre.simple-code-box,
-pre.simple-code-box,
-.simple-code-box {
-
-  /* Fondo claro de la caja */
-  background-color: #f8f8f8 !important;
-
-  /* Borde general gris */
-  border: 1px solid #d0d0d0 !important;
-
-  /* Línea roja izquierda (versión fina, decorativa) */
-  border-left: 1px solid #d44950 !important;
-
-  /* ============================================================
-     LÍNEA ROJA PRINCIPAL (IMPORTANTE)
-     ------------------------------------------------------------
-     Este box-shadow crea una línea interna roja a la izquierda.
-     Es la solución REAL al problema de Blogger, porque:
-     - Blogger puede eliminar border-left
-     - pero normalmente NO elimina box-shadow
-
-     Resultado: la línea roja se mantiene incluso después de editar
-     ============================================================ */
-  box-shadow: inset 6px 0 0 #d44950 !important;
-
-  /* Espaciado y legibilidad */
-  line-height: 1.5 !important;
-  margin: 10px 0 !important;
-
-  /* Scroll horizontal si el código es largo */
-  overflow-x: auto !important;
-
-  /* Padding: más espacio a la izquierda para que no se pegue al borde rojo */
-  padding: 10px 10px 10px 14px !important;
-
-  /* Bordes redondeados */
-  border-radius: 4px !important;
-}
-
-/* ============================================================
-   ESTILO DEL TEXTO DENTRO DEL BLOQUE DE CÓDIGO
-   ============================================================ */
-
-.post-body pre.simple-code-box span,
-pre.simple-code-box span,
-.simple-code-box span {
-
-  /* Color del texto */
-  color: #000000 !important;
-
-  /* Fuente monoespaciada para código */
-  font-family: 'Ubuntu Mono', Consolas, monospace !important;
-
-  /* Tamaño del texto */
-  font-size: 15px !important;
-
-  /* Mantiene saltos de línea y formato original */
-  white-space: pre !important;
-}
-```
-
----
-
-### Explicación técnica
-
-* Blogger **reescribe el HTML** cuando se usa el editor visual.
-* Esto puede eliminar estilos inline como `border-left`.
-* El `box-shadow` no suele ser eliminado por Blogger.
-* Por eso se usa como alternativa para crear la línea izquierda.
-
----
-
-### Personalización
-
-Puedes cambiar el grosor de la línea roja modificando:
-
-```css
-box-shadow: inset 3px 0 0 #d44950;
-```
-
-Ejemplo:
-
-```css
-box-shadow: inset 2px 0 0 #d44950;
-```
-
-### 🚀 Resultado
-
-Con esta solución:
-
-* Las cajas de código simple mantienen su estilo
-* El borde izquierdo rojo no desaparece
-* La apariencia es consistente incluso después de editar
