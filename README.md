@@ -479,12 +479,9 @@ Por eso se recomienda probar ambos estilos según el tipo de contenido.
 ---
 
 
-## Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android con `cli_html_fixer.py`
+## Aplicar el Fix al HTML desde la terminal de Termux en Android con `cli_html_fixer.py` (también funciona en Linux)
 
-
----
-
-# Requisitos para Termux
+### Requisitos para Termux
 
 **Para Termux** en Android necesitas lo siguiente si estás en un celular con Android:  [https://github.com/wachin/Instalar-git-en-Android-con-Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux) y luego instala las siguientes dependencias:
 
@@ -528,17 +525,24 @@ Especificar archivo de salida y tamaño de fuente:
 python3 cli_html_fixer.py -o salida.html -f 90% archivo.html
 ```
 
+Ver configuración:
+
+```
+python3 cli_html_fixer_actualizado.py --show-config
+```
+
+
 ---
 
 ## Características de esta versión CLI
 
-* **Ligera**: Funciona perfectamente en Linux, Termux y Android
+* **Linux y Android**: Funciona perfectamente en Linux, Android dentro de Termux
 * **Opciones configurables**: Tamaño de fuente y archivo de salida
 * **Manejo de errores**: Detecta archivos inválidos y muestra ayuda
 * **Motor visual profesional**:
 
   * Cajas de código negras tipo terminal
-  * Barra superior tricolor 🇪🇨
+  * Barra superior tricolor
   * Bloques `<pre><code>` simples mejorados
   * Elementos `<code>` inline estilizados
   * Tablas formateadas automáticamente
@@ -547,18 +551,15 @@ python3 cli_html_fixer.py -o salida.html -f 90% archivo.html
 
 El script generará un nuevo archivo con el sufijo `-fix.html` (a menos que especifiques otro nombre con `-o`) con todas las mejoras visuales aplicadas.
 
-
 ### **Recomendaciones adicionales**
-- Puedes usar cualquier editor de texto para escribir en Markdown.
-- `pandoc` permite muchas opciones adicionales para mejorar la conversión de Markdown a HTML.
+- Puedes usar cualquier editor de texto para escribir en Markdown, como Markor, Obsidian, otros.
 - Asegúrate de que el script esté en el mismo directorio donde ejecutas los comandos o proporciona la ruta completa.
-- Para elementos `<code>`, el script no modifica aquellos que ya están dentro de bloques `<pre>` para evitar duplicar estilos.
 
-Esta es la forma en la que convierto markdown a html para algunas de mis entradas en Blogger. 🚀
+Esta es la forma en la que convierto markdown a html para algunas de mis entradas en Blogger.
 
 ---
 
-## Convertir páginas web a Markdown con cajas de código funcionales (Script para etiquetar bloques de código en Markdown)
+# Convertir páginas web a Markdown con cajas de código funcionales (Script para etiquetar bloques / cajas de código en Markdown)
 
 Cuando convierto una página web a Markdown usando:
 
@@ -586,7 +587,7 @@ Sin esa etiqueta, Pandoc genera un `<pre><code>` simple y no una caja de código
 
 ---
 
-# 🔧 Solución: etiquetar automáticamente las cajas de código
+## Solución: etiquetar automáticamente las cajas de código
 
 Para resolver esto he creado un script que toma un archivo `.md` y **añade automáticamente una etiqueta de lenguaje** (`bash`, `python`, `html` o `plaintext`) a **todas las cajas de código**.
 
@@ -598,7 +599,7 @@ Ambas hacen exactamente lo mismo.
 
 ---
 
-# 🖥️ 1) Uso de `tag_markdown_gui.py` (versión gráfica)
+# 1) Uso de `tag_markdown_gui.py` (versión gráfica)
 
 Esta versión es ideal si prefieres trabajar de forma visual.
 
@@ -639,51 +640,51 @@ Este nuevo archivo ya tiene todas las cajas de código correctamente etiquetadas
 
 ---
 
-# 🖥️ 2) Uso de `tag_markdown_cli.py` (versión de terminal)
+# 2) Uso de `tag_markdown_cli.py` (versión de terminal)
 
-Esta versión es ideal para automatizar el flujo o usar en Termux, servidores o scripts.
+Esta versión es ideal para automatizar el flujo o usar en Termux, servidores o scripts. La versión CLI del script. Está basada en tu `tag_markdown_gui.py`, que añade etiquetas como `bash` a bloques de código Markdown. 
 
-## Sintaxis
-
-```bash
-python3 tag_markdown_cli.py [opciones] archivo.md
-```
-
-## Opciones
-
-* `-l` o `--lang` → Lenguaje a usar (`bash`, `python`, `html`, `plaintext`)
-* `-o` o `--output` → Archivo de salida
-* `-h` o `--help` → Muestra ayuda
-
-## Ejemplos
-
-Etiquetar todas las cajas como `bash`:
+**Uso básico:**  
 
 ```bash
 python3 tag_markdown_cli.py archivo.md
 ```
 
-Usar Python:
+**Elegir etiqueta:**  
+
+Elegir bash:
 
 ```bash
-python3 tag_markdown_cli.py -l python archivo.md
+python3 tag_markdown_cli.py archivo.md -l bash
 ```
 
-Elegir nombre de salida:
+Elegir powershell
 
 ```bash
-python3 tag_markdown_cli.py -l bash -o archivo-taged.md archivo.md
+python3 tag_markdown_cli.py archivo.md -l powershell
 ```
 
-El resultado será un archivo:
+Elegir cmd:
 
+```bash
+python3 tag_markdown_cli.py archivo.md -l cmd
 ```
+
+Elegir archivo de salida:
+
+```bash
+python3 tag_markdown_cli.py archivo.md -l bash -o salida.md
+```
+
+Por defecto crea:
+
+```text
 archivo-taged.md
 ```
 
 ---
 
-### Pagina Web > Markdown + Etiquetas > HTML > HTML + FIX
+# Pagina Web > Markdown + Etiquetas > HTML > HTML + FIX
 
 Este es el flujo profesional que uso para convertir páginas web en artículos técnicos con código bien formateado:
 
@@ -716,79 +717,7 @@ python3 cli_html_fixer.py archivo.html
 archivo-fix.html
 ```
 
----
-
-## 🎯 Resultado final
-
-Con este flujo obtienes:
-
-* Cajas de código negras tipo terminal 🇪🇨
-* Tablas con estilo
-* Código inline resaltado
-* HTML limpio y profesional para Blogger o GitHub Pages
-
-Esto convierte cualquier página web común en un **artículo técnico de alta calidad** 🚀
-
----
-
-## Diferencia entre la versión GUI y la versión CLI
-
-Este proyecto incluye **dos formas de aplicar el fix al HTML**:
-
-### GUI (Interfaz gráfica)
-Archivo:
-
-```
-gui_html_fixer.py
-```
-
-Características:
-
-- Interfaz gráfica con selector de archivo
-- Permite elegir el tamaño de fuente de las tablas
-- Valor por defecto: **95%**
-- Ideal para trabajar de forma visual
-
-Se ejecuta con:
-
-```bash
-python3 gui_html_fixer.py
-```
-
-o en Windows:
-
-```powershell
-python gui_html_fixer.py
-```
-
----
-
-### CLI (Línea de comandos)
-
-Archivo:
-
-```
-cli_html_fixer.py
-```
-
-Características:
-
-- Ideal para automatizar flujos de trabajo
-- Compatible con Linux, Windows y Termux
-- Permite especificar archivo de salida y tamaño de fuente
-- Tamaño de fuente por defecto: **95%**
-
-Ejemplo:
-
-```bash
-python3 cli_html_fixer.py archivo.html
-```
-
-o:
-
-```bash
-python3 cli_html_fixer.py -o salida.html -f 95% archivo.html
-```
+y publicar.
 
 ---
 
