@@ -61,7 +61,19 @@ Revisar los paquetes disponibles en:
 
 ---
 
-## Previo al uso, ti tenías el archivo en markdown conviertelo a html con pandoc
+# Obten este programa
+
+Puedes clonar este repositorios en algún lugar de tu ordenador:
+
+```bash
+git clone https://github.com/wachin/html-fix-blogger-post
+```
+
+o descargar el zip desde el botón verde, y luego descomprimirlo.
+
+---
+
+## Previo al uso, si tenías el archivo en markdown conviertelo a html con pandoc
 
 Con mucha frecuencia primero edito mi entrada para Blogger en mardown en mi editor preferido [VNote](https://facilitarelsoftwarelibre.blogspot.com/2025/05/como-descargar-vnote-editor-de-markdown-y-hacerlo-funcionar-en-linux-debian-mx-ubuntu-mint-con-manual.html)
  
@@ -144,20 +156,20 @@ python -m pip install beautifulsoup4 PyQt6
 
 ---
 
-## 3. Ejecutar el programa
+## 3. Ejecutar el programa en Windows
 
-Coloca el archivo:
-
-```
-gui_html_fixer.py
-```
-
-en cualquier carpeta.
-
-Luego abre **PowerShell en esa carpeta** y ejecuta:
+Busca la carpeta donde está el archivo `html_blogger_fixer.py` y luego abre **PowerShell en esa carpeta** y ejecuta:
 
 ```powershell
-python gui_html_fixer.py
+python html_blogger_fixer.py
+```
+
+## 4. Ejecutar el programa en Linux
+
+En Distribuciones Linux Debian o basadas, o Ubuntu y basadas, busca la carpeta donde está el archivo `html_blogger_fixer.py` y luego abre **PowerShell en esa carpeta** y ejecuta:
+
+```powershell
+python html_blogger_fixer.py
 ```
 
 Se abrirá la **interfaz gráfica** del programa.
@@ -168,46 +180,20 @@ Desde allí podrás:
 - Seleccionar el archivo `.html` generado por `pandoc`
 - Generar automáticamente el archivo corregido
 
-El archivo resultante se guardará como:
+El archivo resultante se guardará como, ejemplo:
 
 ```
 archivo-fix.html
 ```
 
+este archivo debes abrirlo para copiar su contenido y pegarlo en Blogger en el editor de html
+
 ---
-## Uso de HTML Fixer
-
-Puedes utilizar HTML Fixer en dos formas:
-
-### 1. Aplicar el Fix al HTML con la versión GUI (Interfaz Gráfica)
-
-1. Ejecuta el script GUI con:
-
-```sh
-python3 gui_html_fixer.py
-```
-
-2. Se abrirá una ventana donde podrás:
-
-   - Especificar el tamaño de fuente para las tablas (por defecto 80%)
-   - Seleccionar el archivo `.html` generado con `pandoc`
-   
-3. El script aplicará automáticamente:
-
-   - Estilos profesionales a bloques de código `<pre class="sourceCode">`
-   - Mejoras visuales a todas las tablas
-   - Formato especial a elementos `<code>` simples
-   - Diseño responsive para todos los elementos
-
-4. Se guardará automáticamente como `archivo-fix.html`.
-
-5. El programa mostrará la ubicación del archivo generado.
 
 # Caracteristicas de lo que hace el script
 
 El script realiza las siguientes mejoras visuales:
 
----
 
 ## Para bloques de código del método `def mejorar_caja_codigo(html):`
 
@@ -808,7 +794,7 @@ python3 cli_html_fixer.py -o salida.html -f 95% archivo.html
 
 # Botón "Copiar" en las cajas de código y cómo funcionan con blogger
 
-He añadido un **botón "Copiar"** a las cajas de código que genera `html_blogger_fixer_pyqt6.py` en la función:
+He añadido un **botón "Copiar"** a las cajas de código que genera `html_blogger_fixer.py` en la función:
 
 `def mejorar_caja_codigo(html):`
 
