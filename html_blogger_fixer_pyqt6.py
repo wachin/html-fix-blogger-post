@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -8,6 +9,7 @@ from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QStandardPaths, QSi
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QApplication,
+    QMainWindow,
     QWidget,
     QLabel,
     QLineEdit,
@@ -50,6 +52,7 @@ MARKDOWN_CODE_LABELS = {
     "ps1",
     "console",
     "terminal",
+    "python",
 }
 
 
@@ -66,18 +69,18 @@ def obtener_directorio_config():
     """
     Devuelve la carpeta de configuración de la app.
 
-    En Windows normalmente será AppData/Roaming.
-    En Linux será la carpeta de configuración del usuario.
+    En Windows usa AppData/Roaming.
+    En Linux usa ~/.config.
     """
-    base_dir = QStandardPaths.writableLocation(
-        QStandardPaths.StandardLocation.AppConfigLocation
-    )
+    if sys.platform.startswith("win"):
+        appdata = os.environ.get("APPDATA")
+        if appdata:
+            config_dir = Path(appdata) / APP_NAME
+        else:
+            config_dir = Path.home() / "AppData" / "Roaming" / APP_NAME
+    else:
+        config_dir = Path.home() / ".config" / APP_NAME
 
-    if not base_dir:
-        # Respaldo simple por si algo fallara
-        base_dir = str(Path.home() / f".{APP_NAME.lower()}")
-
-    config_dir = Path(base_dir)
     config_dir.mkdir(parents=True, exist_ok=True)
     return config_dir
 
@@ -346,6 +349,9 @@ def mejorar_bloques_code_simples(html):
     """
     Mejora la apariencia de los bloques <pre><code> simples que no tienen
     etiqueta reconocible ni clase sourceCode.
+
+    Usa una clase CSS llamada simple-code-box para que Blogger no destruya
+    tan fácilmente el estilo al editar en Vista de redacción.
     """
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -354,8 +360,7 @@ def mejorar_bloques_code_simples(html):
             continue
 
         if pre.code and not pre.get('class'):
-            div = soup.new_tag('div')
-            pre.wrap(div)
+            pre['class'] = pre.get('class', []) + ['simple-code-box']
 
             pre['style'] = (
                 "background-color: #f8f8f8; "
@@ -371,17 +376,13 @@ def mejorar_bloques_code_simples(html):
             span_outer = soup.new_tag('span', style=(
                 "color: #000000; "
                 "font-family: 'Ubuntu Mono', Consolas, monospace; "
-            ))
-
-            span_inner = soup.new_tag('span', style=(
                 "font-size: 15px; "
                 "white-space: pre; "
             ))
 
             code = pre.code
-            span_inner.string = code.get_text()
+            span_outer.string = code.get_text()
 
-            span_outer.append(span_inner)
             pre.clear()
             pre.append(span_outer)
 
@@ -392,7 +393,7 @@ def mejorar_bloques_code_simples(html):
 # INTERFAZ
 # ============================================================
 
-class HtmlFixerApp(QWidget):
+class HtmlFixerApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -470,6 +471,18 @@ class HtmlFixerApp(QWidget):
             print(f"Ruta de traducciones: {translations_path}")
 
     def init_ui(self):
+        # Barra superior debajo de la barra de título
+        self.toolbar = QToolBar("Barra principal")
+        self.toolbar.setMovable(False)
+        self.toolbar.setFloatable(False)
+        self.addToolBar(self.toolbar)
+
+        self.boton_acerca_de = QPushButton("Acerca de...")
+        self.boton_acerca_de.clicked.connect(self.mostrar_acerca_de)
+        self.toolbar.addWidget(self.boton_acerca_de)
+
+        # Widget central
+        central_widget = QWidget()
         layout = QVBoxLayout()
 
         self.label_fuente = QLabel(
@@ -485,10 +498,6 @@ class HtmlFixerApp(QWidget):
         self.boton_procesar.clicked.connect(self.procesar_archivo)
         layout.addWidget(self.boton_procesar)
 
-        self.boton_acerca_de = QPushButton("Acerca de...")
-        self.boton_acerca_de.clicked.connect(self.mostrar_acerca_de)
-        layout.addWidget(self.boton_acerca_de)
-
         self.resultado_label = QLabel("")
         self.resultado_label.setWordWrap(True)
         layout.addWidget(self.resultado_label)
@@ -499,7 +508,8 @@ class HtmlFixerApp(QWidget):
         self.info_config_label.setWordWrap(True)
         layout.addWidget(self.info_config_label)
 
-        self.setLayout(layout)
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
 
     def normalizar_porcentaje_fuente(self, texto):
         """

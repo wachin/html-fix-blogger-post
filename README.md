@@ -11,7 +11,7 @@ Estoy usando markdown para escribir mis tutoriales y luego el archivo .md result
 - Las tablas convertidas no tienen los bordes de colores
 - Los elementos `<code>` simples se ven como texto normal
 
-Este script sirve para aplicar un fix al archivo html dado por pandoc y que quede bonito.
+Este script sirve para aplicar un fix al archivo html dado por pandoc y que quede bonito
 
 
 Flujo de trabajo
@@ -46,7 +46,7 @@ sudo apt install python3-bs4 python3-tk pandoc git
 ```
 
 - `python3-bs4`: Instala BeautifulSoup4 para manipulación de HTML.
-- `python3-tk`: Instala Tkinter para la versión con GUI.
+- `python3-pyqt6`: Instala PyQt6 para la versión con GUI.
 - `pandoc`: Convierte archivos Markdown a HTML.
 
 ---
@@ -62,6 +62,7 @@ pandoc archivo.md -o archivo.html
 ```
 
 ###  Consejo para aplicar el fix a archivos markdown que no tienen etiquetas en las cajas de código
+
 Cuando vaya a convertir un markdown que tiene cajas de comandos de terminal asegúrese que tiene la etiqueta de cada código pues sino no se convierte la caja, ejemplo deben estar así:
 
 ~~~markdown
@@ -87,7 +88,6 @@ ejemplo de texto en una caja de código
 ~~~
 
 
-
 ---
 
 # Uso en Windows
@@ -98,7 +98,7 @@ Este script también funciona en **Windows** siempre que tengas **Python instala
 
 Descarga Python desde:
 
-https://www.python.org/downloads/
+[https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 Durante la instalación **activa la opción**:
 
@@ -124,12 +124,12 @@ entonces Python está correctamente instalado.
 
 ## 2. Instalar la dependencia BeautifulSoup
 
-Este script necesita la librería **BeautifulSoup4**.
+Este script necesita la librería **BeautifulSoup4** y **PyQt6**.
 
 Instálala con:
 
 ```powershell
-python -m pip install beautifulsoup4
+python -m pip install beautifulsoup4 PyQt6
 ```
 
 ---
@@ -193,11 +193,13 @@ python3 gui_html_fixer.py
 
 5. El programa mostrará la ubicación del archivo generado.
 
-## Caracteristicas de lo que hace el script
+# Caracteristicas de lo que hace el script
 
 El script realiza las siguientes mejoras visuales:
 
-### Para bloques de código del método `def mejorar_caja_codigo(html):`
+---
+
+## Para bloques de código del método `def mejorar_caja_codigo(html):`
 
 El script convierte las cajas de código que en markdown si tenían tag, ejemplo, esto:
 
@@ -222,8 +224,11 @@ y esto se ve así:
 
 ![](vx_images/caja-de-codigo-sourceCode.png)
 
+como se ve la caja queda con un estilo negro moderno
 
-### Para bloques de código del método `def mejorar_bloques_code_simples(html):`
+---
+
+## Para bloques de código del método `def mejorar_bloques_code_simples(html):`
 
 El script convierte las cajas de código que en markdown no tenían tag, ejemplo, esto:
 
@@ -247,8 +252,11 @@ y queda así:
 
 ![](vx_images/caja-de-codigo-code.png)
 
+es una caja de código simple que sirve para describir cosas
 
-### **Para elementos `<code>` simples**
+---
+
+## **Para elementos `<code>` simples**
 
 Para código en línea dentro del texto en archivos markdown, ejemplo:
 
@@ -265,13 +273,64 @@ ese se convertirá a `<code>` en html, y se aplicará lo siguiente:
 - Pequeño padding y bordes redondeados
 
 
-### **Para tablas**
+## **Para tablas**
 
 - Encabezado con fondo negro y texto blanco
 - Filas alternas (blanco / gris claro)
 - Bordes negros (1px solid black)
 - Texto que se ajusta automáticamente
 - Contenedor responsive con scroll horizontal
+
+### Mejora opcional para tablas más compactas (tipo documentos científicos)
+
+Si deseas que las tablas se vean **más compactas y profesionales**, como en artículos científicos (menos espacio entre filas), puedes ajustar el *padding* y el *line-height* en el script.
+
+#### Ajuste recomendado (compacto)
+
+En la función `mejorar_tablas()` cambia:
+
+```python
+padding: 14px 16px;
+line-height: 1.55;
+```
+
+por:
+
+```python
+padding: 6px 12px;
+line-height: 1.2;
+```
+
+Esto hará que:
+
+* Las filas queden más juntas
+* Se aproveche mejor el espacio en pantalla
+* Las tablas se vean más “densas” y profesionales
+
+#### Ajuste más compacto (opcional)
+
+Si quieres un estilo **aún más compacto**, puedes usar:
+
+```python
+padding: 4px 10px;
+line-height: 1.1;
+```
+
+Este estilo es ideal cuando:
+
+* Estás imprimiendo documentos (A4 en dos columnas)
+* Tienes tablas largas
+* Quieres ahorrar espacio vertical
+
+## Recomendación
+
+* **Para blog / lectura cómoda** → usa `6px 12px` y `1.2`
+* **Para impresión o documentos densos** → usa `4px 10px` y `1.1`
+
+Pero reducir demasiado el padding puede afectar la legibilidad, especialmente en móviles.
+Por eso se recomienda probar ambos estilos según el tipo de contenido.
+
+---
 
 
 ## Aplicar el Fix al HTML desde la terminal de Linux o de Termux en Android con `cli_html_fixer.py`
@@ -280,8 +339,7 @@ ese se convertirá a `<code>` en html, y se aplicará lo siguiente:
 
 # Requisitos para Linux
 
-
-## Debian
+## Debian, Ubuntu
 
 Poner en la terminal:
 
@@ -289,23 +347,17 @@ Poner en la terminal:
 sudo apt install python3-bs4
 ```
 
-Presente desde bullseye
+Revisar los paquetes disponibles en:
+
+**Presente desde bullseye**  
 [packages.debian.org/python3-bs4](packages.debian.org/python3-bs4)
 
-## Ubuntu
-Presente en resolute
-
-```bash
-sudo apt install python3-bs4
-```
-
-revisar en
-
+**Ubuntu ** 
 [packages.ubuntu.com/python3-bs4](packages.ubuntu.com/python3-bs4)
 
 ---
 
-### Requisitos para Termux
+# Requisitos para Termux
 
 **Para Termux** en Android necesitas lo siguiente si estás en un celular con Android:  [https://github.com/wachin/Instalar-git-en-Android-con-Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux) y luego instala las siguientes dependencias:
 
@@ -319,7 +371,7 @@ y luego instalar el paquete beautifulsoup4 con el comando:
 python -m pip install bs4
 ```
 
-#### **Modo de uso**:
+## **Modo de uso**:
 
 Coloca el archivo `cli_html_fixer.py` en la misma carpeta donde esté el archivo HTML al que deseas aplicar el fix.
 
@@ -351,7 +403,7 @@ python3 cli_html_fixer.py -o salida.html -f 90% archivo.html
 
 ---
 
-### Características de esta versión CLI
+## Características de esta versión CLI
 
 * **Ligera**: Funciona perfectamente en Linux, Termux y Android
 * **Opciones configurables**: Tamaño de fuente y archivo de salida
@@ -379,7 +431,7 @@ Esta es la forma en la que convierto markdown a html para algunas de mis entrada
 
 ---
 
-## 🧩 Convertir páginas web a Markdown con cajas de código funcionales (Script para etiquetar bloques de código en Markdown)
+## Convertir páginas web a Markdown con cajas de código funcionales (Script para etiquetar bloques de código en Markdown)
 
 Cuando convierto una página web a Markdown usando:
 
@@ -613,17 +665,19 @@ python3 cli_html_fixer.py -o salida.html -f 95% archivo.html
 
 ---
 
-# Cómo añadí un botón "Copiar" a las cajas de código
+# Botón "Copiar" en las cajas de código y cómo funcionan con blogger
 
-Una mejora muy útil es añadir un **botón "Copiar"** a las cajas de código que genera `gui_html_fixer.py`.
+He añadido un **botón "Copiar"** a las cajas de código que genera `html_blogger_fixer_pyqt6.py` en la función:
 
-La idea es colocar el botón en la **barra de terminal** que el script ya crea encima de cada bloque `<pre class="sourceCode">`.
+`def mejorar_caja_codigo(html):`
 
-Luego el botón copiará automáticamente el código al portapapeles.
+Se coloca un botón en la **barra de terminal** que el script ya crea encima de cada bloque `<pre class="sourceCode">`.
+
+Luego el botón copiará automáticamente el código al portapapeles al darle clic.
 
 ---
 
-## 1. Modificado el script `gui_html_fixer.py`
+## Cómo funciona la función `Botón "Copiar"`
 
 Dentro de la función `mejorar_caja_codigo()` está añadido el siguiente código **después de crear los puntos de colores**:
 
@@ -650,13 +704,13 @@ copy_btn.string = "Copiar"
 terminal_bar.append(copy_btn)
 ```
 
-Esto añade automáticamente un botón **Copiar** en cada caja de código.
+Esto añade automáticamente un botón **Copiar** en cada caja de código, y funciona cuando en la plantilla de Blogger se le añde el siguiente código:
 
----
+## Añadir el JavaScript en el tema de Blogger
 
-## 2. Añadir el JavaScript en el tema de Blogger
+Para que el botón funcione debes añadir un pequeño script en tu **tema de Blogger**, ve a:
 
-Para que el botón funcione debes añadir un pequeño script en tu **tema de Blogger**.
+**Tema > Mi tema > PERSONALIZAR**
 
 Abre tu archivo de tema y pega el siguiente código **antes de `</body>`**:
 
@@ -727,61 +781,157 @@ Abre tu archivo de tema y pega el siguiente código **antes de `</body>`**:
 </script>
 ```
 
+y con esto queda añadido el script para que en cada publicación donde se use el botón "Copiar" cuando la persona le de clic, se copie y pueda pegarlo encualquier programa que tenga abierto.
+
 ---
 
-# ✨ Mejora opcional: tablas más compactas (tipo documentos científicos)
 
-Si deseas que las tablas se vean **más compactas y profesionales**, como en artículos científicos (menos espacio entre filas), puedes ajustar el *padding* y el *line-height* en el script.
+## 🛠️ Solución para Blogger (muy importante)
 
-## 🔧 Ajuste recomendado (compacto)
+### ❗ Problema
 
-En la función `mejorar_tablas()` cambia:
+Cuando se publica el HTML generado por este programa en **Blogger**, las cajas de código simples (`<pre><code>`) se muestran correctamente al inicio.
 
-```python
-padding: 14px 16px;
-line-height: 1.55;
+Sin embargo, al editar la entrada en:
+
+> ✏️ **Vista de redacción (modo visual)**
+
+Blogger modifica el HTML interno y puede eliminar o alterar estilos como:
+
+```css
+border-left
 ```
 
-por:
+Esto provoca que se pierda el **borde izquierdo rojo** que está así:
 
-```python
-padding: 6px 12px;
-line-height: 1.2;
+![](vx_images/Barra-de-código-simple-con-borde-izquierdo-rojo.png)
+
+afectando el diseño visual de las cajas de código quedando así:
+
+![](vx_images/Barra-de-código-simple-sin-borde-izquierdo-rojo.png)
+
+### ✅ Solución
+
+La solución consiste en usar una combinación de:
+
+* una **clase CSS (`simple-code-box`)**
+* estilos con `!important`
+* y un **`box-shadow` interno** que reemplaza el borde
+
+### Paso 1: Añadir CSS en el tema de Blogger
+
+En Blogger ir a:
+
+```
+Tema → Personalizar → Avanzado → Añadir CSS
 ```
 
-Esto hará que:
+y añadir el siguiente código:
 
-* Las filas queden más juntas
-* Se aproveche mejor el espacio en pantalla
-* Las tablas se vean más “densas” y profesionales
+```css
+/* ============================================================
+   ESTILO PARA CAJAS DE CÓDIGO SIMPLES EN BLOGGER
+   ------------------------------------------------------------
+   Este bloque corrige un problema de Blogger:
+   cuando se edita en "Vista de redacción", Blogger elimina o
+   altera algunos estilos como border-left.
 
----
+   Para evitar perder la línea roja izquierda, usamos:
+   - border-left (estético, pero no confiable)
+   - box-shadow (solución robusta que Blogger respeta mejor)
+   - !important para evitar que Blogger sobrescriba estilos
+   ============================================================ */
 
-## 🔬 Ajuste más compacto (opcional)
+.post-body pre.simple-code-box,
+pre.simple-code-box,
+.simple-code-box {
 
-Si quieres un estilo **aún más compacto**, puedes usar:
+  /* Fondo claro de la caja */
+  background-color: #f8f8f8 !important;
 
-```python
-padding: 4px 10px;
-line-height: 1.1;
+  /* Borde general gris */
+  border: 1px solid #d0d0d0 !important;
+
+  /* Línea roja izquierda (versión fina, decorativa) */
+  border-left: 1px solid #d44950 !important;
+
+  /* ============================================================
+     LÍNEA ROJA PRINCIPAL (IMPORTANTE)
+     ------------------------------------------------------------
+     Este box-shadow crea una línea interna roja a la izquierda.
+     Es la solución REAL al problema de Blogger, porque:
+     - Blogger puede eliminar border-left
+     - pero normalmente NO elimina box-shadow
+
+     Resultado: la línea roja se mantiene incluso después de editar
+     ============================================================ */
+  box-shadow: inset 6px 0 0 #d44950 !important;
+
+  /* Espaciado y legibilidad */
+  line-height: 1.5 !important;
+  margin: 10px 0 !important;
+
+  /* Scroll horizontal si el código es largo */
+  overflow-x: auto !important;
+
+  /* Padding: más espacio a la izquierda para que no se pegue al borde rojo */
+  padding: 10px 10px 10px 14px !important;
+
+  /* Bordes redondeados */
+  border-radius: 4px !important;
+}
+
+/* ============================================================
+   ESTILO DEL TEXTO DENTRO DEL BLOQUE DE CÓDIGO
+   ============================================================ */
+
+.post-body pre.simple-code-box span,
+pre.simple-code-box span,
+.simple-code-box span {
+
+  /* Color del texto */
+  color: #000000 !important;
+
+  /* Fuente monoespaciada para código */
+  font-family: 'Ubuntu Mono', Consolas, monospace !important;
+
+  /* Tamaño del texto */
+  font-size: 15px !important;
+
+  /* Mantiene saltos de línea y formato original */
+  white-space: pre !important;
+}
 ```
 
-Este estilo es ideal cuando:
+---
 
-* Estás imprimiendo documentos (A4 en dos columnas)
-* Tienes tablas largas
-* Quieres ahorrar espacio vertical
+### Explicación técnica
+
+* Blogger **reescribe el HTML** cuando se usa el editor visual.
+* Esto puede eliminar estilos inline como `border-left`.
+* El `box-shadow` no suele ser eliminado por Blogger.
+* Por eso se usa como alternativa para crear la línea izquierda.
 
 ---
 
-## ⚖️ Recomendación
+### Personalización
 
-* 📄 **Para blog / lectura cómoda** → usa `6px 12px` y `1.2`
-* 📚 **Para impresión o documentos densos** → usa `4px 10px` y `1.1`
+Puedes cambiar el grosor de la línea roja modificando:
 
----
+```css
+box-shadow: inset 3px 0 0 #d44950;
+```
 
-Pero reducir demasiado el padding puede afectar la legibilidad, especialmente en móviles.
-Por eso se recomienda probar ambos estilos según el tipo de contenido.
+Ejemplo:
 
----
+```css
+box-shadow: inset 2px 0 0 #d44950;
+```
+
+### 🚀 Resultado
+
+Con esta solución:
+
+* Las cajas de código simple mantienen su estilo
+* El borde izquierdo rojo no desaparece
+* La apariencia es consistente incluso después de editar
