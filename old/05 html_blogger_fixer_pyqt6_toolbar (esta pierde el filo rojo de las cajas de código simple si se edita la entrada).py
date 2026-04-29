@@ -1,6 +1,5 @@
 import sys
 import json
-import os
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -69,18 +68,18 @@ def obtener_directorio_config():
     """
     Devuelve la carpeta de configuración de la app.
 
-    En Windows usa AppData/Roaming.
-    En Linux usa ~/.config.
+    En Windows normalmente será AppData/Roaming.
+    En Linux será la carpeta de configuración del usuario.
     """
-    if sys.platform.startswith("win"):
-        appdata = os.environ.get("APPDATA")
-        if appdata:
-            config_dir = Path(appdata) / APP_NAME
-        else:
-            config_dir = Path.home() / "AppData" / "Roaming" / APP_NAME
-    else:
-        config_dir = Path.home() / ".config" / APP_NAME
+    base_dir = QStandardPaths.writableLocation(
+        QStandardPaths.StandardLocation.AppConfigLocation
+    )
 
+    if not base_dir:
+        # Respaldo simple por si algo fallara
+        base_dir = str(Path.home() / f".{APP_NAME.lower()}")
+
+    config_dir = Path(base_dir)
     config_dir.mkdir(parents=True, exist_ok=True)
     return config_dir
 
@@ -349,9 +348,6 @@ def mejorar_bloques_code_simples(html):
     """
     Mejora la apariencia de los bloques <pre><code> simples que no tienen
     etiqueta reconocible ni clase sourceCode.
-
-    Usa una clase CSS llamada simple-code-box para que Blogger no destruya
-    tan fácilmente el estilo al editar en Vista de redacción.
     """
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -360,7 +356,8 @@ def mejorar_bloques_code_simples(html):
             continue
 
         if pre.code and not pre.get('class'):
-            pre['class'] = pre.get('class', []) + ['simple-code-box']
+            div = soup.new_tag('div')
+            pre.wrap(div)
 
             pre['style'] = (
                 "background-color: #f8f8f8; "
@@ -376,13 +373,17 @@ def mejorar_bloques_code_simples(html):
             span_outer = soup.new_tag('span', style=(
                 "color: #000000; "
                 "font-family: 'Ubuntu Mono', Consolas, monospace; "
+            ))
+
+            span_inner = soup.new_tag('span', style=(
                 "font-size: 15px; "
                 "white-space: pre; "
             ))
 
             code = pre.code
-            span_outer.string = code.get_text()
+            span_inner.string = code.get_text()
 
+            span_outer.append(span_inner)
             pre.clear()
             pre.append(span_outer)
 
