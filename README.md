@@ -59,7 +59,7 @@ O descarga el ZIP desde el botón verde de GitHub y descomprímelo.
 
 ```bash
 sudo apt update
-sudo apt install python3-bs4 python3-pyqt6 qt6-translations-l10n pandoc git
+sudo apt install python3-bs4 python3-pyqt6 qt6-translations-l10n python3-pyqt6.qtsvg pandoc git
 ```
 
 - `python3-bs4` — BeautifulSoup4 para manipulación de HTML
@@ -367,15 +367,15 @@ python arreglar_referencias_pmc.py
 
 Se abre una ventana con dos paneles (entrada / salida) y los siguientes botones:
 
-| Botón | Función |
-|---|---|
-| **Abrir .md** | Carga un archivo Markdown |
-| **Pegar en entrada** | Pega el portapapeles en el panel de entrada |
-| **Arreglar Markdown** | Aplica todas las correcciones |
-| **Copiar salida** | Copia el resultado al portapapeles |
-| **Guardar salida** | Guarda el resultado como archivo `.md` |
+|         Botón          |                   Función                   |
+| ---------------------- | ------------------------------------------- |
+| **Abrir .md**          | Carga un archivo Markdown                   |
+| **Pegar en entrada**   | Pega el portapapeles en el panel de entrada |
+| **Arreglar Markdown**  | Aplica todas las correcciones               |
+| **Copiar salida**      | Copia el resultado al portapapeles          |
+| **Guardar salida**     | Guarda el resultado como archivo `.md`      |
 | **Eliminar [] vacíos** | Elimina corchetes vacíos `[]` del resultado |
-| **Limpiar todo** | Limpia ambos paneles |
+| **Limpiar todo**       | Limpia ambos paneles                        |
 
 ### Flujo de trabajo recomendado para referencias PMC
 

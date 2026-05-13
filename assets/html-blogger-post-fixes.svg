@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Fondo redondeado oscuro, igual al color de las cajas de código del programa -->
+  <rect width="64" height="64" rx="12" ry="12" fill="#1e1e1e"/>
+
+  <!-- Borde izquierdo verde, igual al accent de las cajas de código -->
+  <rect x="0" y="0" width="5" height="64" rx="3" ry="3" fill="#3aa655"/>
+
+  <!-- Puntos de la barra de terminal (amarillo, azul, rojo) -->
+  <circle cx="14" cy="11" r="3.2" fill="#FAD510"/>
+  <circle cx="24" cy="11" r="3.2" fill="#0066CC"/>
+  <circle cx="34" cy="11" r="3.2" fill="#CE1126"/>
+
+  <!-- Línea separadora de la barra -->
+  <line x1="5" y1="19" x2="64" y2="19" stroke="#2a2a2a" stroke-width="1.5"/>
+
+  <!-- Símbolo </> centrado en el área de código -->
+  <!-- Corchete de apertura < -->
+  <polyline points="16,38 10,32 16,26" fill="none" stroke="#3aa655" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Barra diagonal / -->
+  <line x1="28" y1="24" x2="22" y2="40" stroke="#f0f0f0" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Corchete de cierre > -->
+  <polyline points="32,26 38,32 32,38" fill="none" stroke="#3aa655" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Estrella / destello "fix" en la esquina inferior derecha -->
+  <g transform="translate(50,50)">
+    <line x1="0" y1="-6" x2="0" y2="6"  stroke="#FAD510" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-6" y1="0" x2="6" y2="0"  stroke="#FAD510" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-4.2" y1="-4.2" x2="4.2" y2="4.2" stroke="#FAD510" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="4.2" y1="-4.2" x2="-4.2" y2="4.2" stroke="#FAD510" stroke-width="1.4" stroke-linecap="round"/>
+  </g>
+</svg>

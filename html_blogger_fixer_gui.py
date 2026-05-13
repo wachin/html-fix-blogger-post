@@ -8,7 +8,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 
 from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QStandardPaths, QSize, Qt
-from PyQt6.QtGui import QAction, QDragEnterEvent, QDropEvent
+from PyQt6.QtGui import QAction, QDragEnterEvent, QDropEvent, QIcon
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -23,6 +23,32 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QToolBar,
 )
+
+
+# ============================================================
+# ICONO DE LA APLICACIÓN
+# ============================================================
+#
+# El icono se carga desde assets/html-blogger-post-fixes.svg,
+# ubicado junto al script. La ruta se resuelve con Path(__file__).parent
+# para que funcione igual en Linux y Windows sin importar desde qué
+# directorio se ejecute el programa.
+#
+# Requisitos para que Qt renderice SVG:
+#   Linux con PyQt6 instalado via apt:  sudo apt install python3-pyqt6.qtsvg
+#     (libqt6svg6 se instala automáticamente como dependencia)
+#   Linux con PyQt6 instalado via pip:  nada extra, SVG ya está incluido
+#   Windows con PyQt6 instalado via pip: nada extra, SVG ya está incluido
+
+def crear_icono_app():
+    """
+    Carga el icono SVG desde assets/ relativo a la ubicación del script.
+    Devuelve un QIcon vacío (sin error) si el archivo no se encuentra.
+    """
+    ruta_icono = Path(__file__).parent / "assets" / "html-blogger-post-fixes.svg"
+    if ruta_icono.exists():
+        return QIcon(str(ruta_icono))
+    return QIcon()
 
 
 # ============================================================
@@ -478,6 +504,7 @@ class HtmlFixerApp(QMainWindow):
         self.config = cargar_configuracion()
 
         self.setWindowTitle("Mejorador de HTML")
+        self.setWindowIcon(crear_icono_app())
         self.resize(520, 310)
         self.setAcceptDrops(True)
 
@@ -713,6 +740,7 @@ class HtmlFixerApp(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+    app.setWindowIcon(crear_icono_app())
     ventana = HtmlFixerApp()
     ventana.show()
     sys.exit(app.exec())
