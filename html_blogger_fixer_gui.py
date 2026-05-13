@@ -7,8 +7,8 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QStandardPaths, QSize
-from PyQt6.QtGui import QAction
+from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QStandardPaths, QSize, Qt
+from PyQt6.QtGui import QAction, QDragEnterEvent, QDropEvent
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -18,6 +18,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QFileDialog,
     QVBoxLayout,
+    QHBoxLayout,
+    QFrame,
     QMessageBox,
     QToolBar,
 )
@@ -392,6 +394,77 @@ def mejorar_bloques_code_simples(html):
 
 
 # ============================================================
+# WIDGET ZONA DE ARRASTRAR Y SOLTAR
+# ============================================================
+
+class DropZoneWidget(QFrame):
+    """
+    Widget visual que muestra la zona de arrastrar y soltar.
+    No captura eventos de drop (los maneja la ventana principal).
+    """
+    def __init__(self, on_upload_clicked, parent=None):
+        super().__init__(parent)
+        self.setAcceptDrops(False)
+        self._build_ui(on_upload_clicked)
+
+    def _build_ui(self, on_upload_clicked):
+        self.setObjectName("dropZone")
+        self.setStyleSheet("""
+            QFrame#dropZone {
+                border: 2px dashed #b0b8c1;
+                border-radius: 10px;
+                background-color: #fafafa;
+            }
+        """)
+        self.setMinimumHeight(130)
+
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setSpacing(6)
+
+        lbl_drag = QLabel("Drag and drop files")
+        lbl_drag.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        lbl_drag.setStyleSheet("font-size: 15px; font-weight: bold; color: #222; border: none;")
+
+        lbl_or = QLabel("or")
+        lbl_or.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        lbl_or.setStyleSheet("font-size: 13px; color: #666; border: none;")
+
+        btn_upload = QPushButton("⬆  Upload")
+        btn_upload.setFixedSize(130, 36)
+        btn_upload.setCursor(Qt.CursorShape.PointingHandCursor)
+        btn_upload.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #2bbfa4, stop:1 #1a9e87
+                );
+                color: white;
+                border: none;
+                border-radius: 18px;
+                font-size: 13px;
+                font-weight: bold;
+                padding: 0 16px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #25a890, stop:1 #158a74
+                );
+            }
+            QPushButton:pressed {
+                background: #117a63;
+            }
+        """)
+        btn_upload.clicked.connect(on_upload_clicked)
+
+        layout.addWidget(lbl_drag)
+        layout.addWidget(lbl_or)
+        layout.addWidget(btn_upload, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(layout)
+
+
+# ============================================================
 # INTERFAZ
 # ============================================================
 
@@ -405,7 +478,8 @@ class HtmlFixerApp(QMainWindow):
         self.config = cargar_configuracion()
 
         self.setWindowTitle("Mejorador de HTML")
-        self.resize(520, 260)
+        self.resize(520, 310)
+        self.setAcceptDrops(True)
 
         self.init_ui()
         self.centrar_ventana()
@@ -486,6 +560,8 @@ class HtmlFixerApp(QMainWindow):
         # Widget central
         central_widget = QWidget()
         layout = QVBoxLayout()
+        layout.setSpacing(8)
+        layout.setContentsMargins(14, 10, 14, 10)
 
         self.label_fuente = QLabel(
             "Elije el tamaño de la fuente de la tabla (ej: 90%, 100%, etc):"
@@ -496,9 +572,9 @@ class HtmlFixerApp(QMainWindow):
         self.entry_fuente.setText(self.config.get("table_font_size", "90%"))
         layout.addWidget(self.entry_fuente)
 
-        self.boton_procesar = QPushButton("Seleccionar archivo HTML")
-        self.boton_procesar.clicked.connect(self.procesar_archivo)
-        layout.addWidget(self.boton_procesar)
+        # Zona de arrastrar y soltar
+        self.drop_zone = DropZoneWidget(on_upload_clicked=self.procesar_archivo)
+        layout.addWidget(self.drop_zone)
 
         self.resultado_label = QLabel("")
         self.resultado_label.setWordWrap(True)
@@ -530,12 +606,11 @@ class HtmlFixerApp(QMainWindow):
 
     def procesar_archivo(self):
         self.guardar_preferencia_fuente()
-        porcentaje_fuente = self.config.get("table_font_size", "90%")
 
         dialogo = QFileDialog(self, "Seleccionar archivo HTML")
         dialogo.setFileMode(QFileDialog.FileMode.ExistingFile)
         dialogo.setNameFilter("Archivos HTML (*.html *.htm)")
-        dialogo.resize(900, 600)  # aquí controlas el tamaño
+        dialogo.resize(900, 600)
         dialogo.setViewMode(QFileDialog.ViewMode.Detail)
 
         if not dialogo.exec():
@@ -545,7 +620,16 @@ class HtmlFixerApp(QMainWindow):
         if not archivos:
             return
 
-        filepath = archivos[0]
+        self._procesar_ruta(archivos[0])
+
+    def _procesar_ruta(self, filepath):
+        """
+        Lógica central de procesamiento. Recibe la ruta del archivo HTML,
+        lo procesa y guarda el resultado. Usada tanto por el diálogo de
+        apertura como por el arrastrar y soltar.
+        """
+        self.guardar_preferencia_fuente()
+        porcentaje_fuente = self.config.get("table_font_size", "90%")
 
         try:
             ruta_entrada = Path(filepath)
@@ -577,6 +661,55 @@ class HtmlFixerApp(QMainWindow):
                 "Error",
                 f"Ocurrió un error al procesar el archivo:\n{e}"
             )
+
+    # ----------------------------------------------------------
+    # Drag & Drop
+    # ----------------------------------------------------------
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        if event.mimeData().hasUrls():
+            url = event.mimeData().urls()[0]
+            file_path = url.toLocalFile()
+            self.open_dropped_file(file_path)
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def open_dropped_file(self, file_path):
+        """
+        Abre un archivo recibido por arrastrar y soltar.
+        Valida que exista y tenga extensión HTML antes de procesarlo.
+        """
+        if not os.path.exists(file_path):
+            QMessageBox.warning(
+                self,
+                "Archivo no encontrado",
+                f"El archivo no existe:\n{file_path}"
+            )
+            return
+
+        if not file_path.lower().endswith(('.html', '.htm')):
+            QMessageBox.warning(
+                self,
+                "Tipo de archivo no válido",
+                "Solo se aceptan archivos HTML (.html o .htm).\n"
+                f"Archivo recibido: {file_path}"
+            )
+            return
+
+        self._procesar_ruta(file_path)
 
 def main():
     app = QApplication(sys.argv)
