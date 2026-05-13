@@ -1,11 +1,11 @@
 # Blogger HTML Fixer — Cajas de código, Tablas y Botón Copiar
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
-[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20Termux-informational.svg)](#)
+[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS%20%7C%20Termux-informational.svg)](#)
 [![GUI](https://img.shields.io/badge/GUI-PyQt6-41CD52.svg)](https://riverbankcomputing.com/software/pyqt/)
 [![HTML Parser](https://img.shields.io/badge/Parser-BeautifulSoup4-success.svg)](https://www.crummy.com/software/BeautifulSoup/)
 
-Herramienta para mejorar archivos HTML generados por Pandoc antes de publicarlos en Blogger. Corrige la apariencia de cajas de código, tablas y elementos `<code>` en línea.
+Herramienta para mejorar archivos HTML generados por Pandoc antes de publicarlos en Blogger. Corrige la apariencia de cajas de código, tablas y elementos `<code>` en línea. Incluye también una herramienta para limpiar referencias bibliográficas copiadas desde PubMed Central.
 
 ---
 
@@ -43,6 +43,16 @@ JS en la plantilla habilita el botón "Copiar"
 
 ---
 
+## Obtener el programa
+
+```bash
+git clone https://github.com/wachin/html-fix-blogger-post
+```
+
+O descarga el ZIP desde el botón verde de GitHub y descomprímelo.
+
+---
+
 ## Instalación
 
 ### Linux — Debian, Ubuntu y derivados
@@ -65,7 +75,7 @@ Paquetes disponibles en:
 
 ```bash
 pkg install git pandoc python3
-python -m pip install bs4
+python -m pip install bs4 PyQt6
 ```
 
 Guía para instalar git en Termux: [github.com/wachin/Instalar-git-en-Android-con-Termux](https://github.com/wachin/Instalar-git-en-Android-con-Termux)
@@ -74,21 +84,71 @@ Guía para instalar git en Termux: [github.com/wachin/Instalar-git-en-Android-co
 
 1. Descarga Python desde [python.org/downloads](https://www.python.org/downloads/) y activa **Add Python to PATH** durante la instalación.
 
-2. Instala las dependencias:
+2. Verifica la instalación abriendo PowerShell:
+
+```powershell
+python --version
+```
+
+3. Instala las dependencias:
 
 ```powershell
 python -m pip install beautifulsoup4 PyQt6
 ```
 
----
+4. Instala Pandoc desde [pandoc.org/installing](https://pandoc.org/installing.html) si lo necesitas para convertir Markdown a HTML.
 
-## Obtener el programa
+### macOS
+
+1. Verifica si Python está instalado:
 
 ```bash
-git clone https://github.com/wachin/html-fix-blogger-post
+python3 --version
 ```
 
-O descarga el ZIP desde el botón verde de GitHub y descomprímelo.
+Si no está instalado, instálalo con Homebrew:
+
+```bash
+brew install python
+```
+
+Si no tienes Homebrew, instálalo desde [brew.sh](https://brew.sh/).
+
+2. Instala las dependencias:
+
+```bash
+pip3 install beautifulsoup4 PyQt6
+```
+
+3. Instala Pandoc si lo necesitas:
+
+```bash
+brew install pandoc
+```
+
+---
+
+## Ejecutar los scripts
+
+### Linux y macOS
+
+```bash
+python3 html_blogger_fixer_gui.py
+python3 html_blogger_fixer_cli.py archivo.html
+python3 tag_markdown_gui.py
+python3 tag_markdown_cli.py archivo.md
+python3 arreglar_referencias_pmc.py
+```
+
+### Windows
+
+```powershell
+python html_blogger_fixer_gui.py
+python html_blogger_fixer_cli.py archivo.html
+python tag_markdown_gui.py
+python tag_markdown_cli.py archivo.md
+python arreglar_referencias_pmc.py
+```
 
 ---
 
@@ -140,12 +200,13 @@ La configuración (tamaño de fuente) se guarda en:
 
 - Linux: `~/.config/HtmlFixerPyQt6/config.json`
 - Windows: `AppData\Roaming\HtmlFixerPyQt6\config.json`
+- macOS: `~/.config/HtmlFixerPyQt6/config.json`
 
 ---
 
 # 2. html_blogger_fixer_cli.py — Versión de terminal
 
-Ideal para Linux, Termux o automatización.
+Ideal para Linux, macOS, Termux o automatización.
 
 ### Uso básico
 
@@ -160,10 +221,10 @@ Genera `archivo-fix.html` en la misma carpeta.
 ```
 python3 html_blogger_fixer_cli.py [opciones] archivo.html
 
-  -o, --output    Archivo de salida (por defecto: archivo-fix.html)
-  -f, --font      Tamaño de fuente para tablas (ej: 90%, 1em, 14px)
-  --no-save-config  No guardar el tamaño de fuente en config.json
-  --show-config   Muestra la ruta y contenido del archivo de configuración
+  -o, --output        Archivo de salida (por defecto: archivo-fix.html)
+  -f, --font          Tamaño de fuente para tablas (ej: 90%, 1em, 14px)
+  --no-save-config    No guardar el tamaño de fuente en config.json
+  --show-config       Muestra la ruta y contenido del archivo de configuración
 ```
 
 ### Ejemplos
@@ -208,14 +269,14 @@ El programa genera `archivo-taged.md` con todos los bloques sin etiqueta corregi
 
 La configuración (última etiqueta usada, última carpeta) se guarda en:
 
-- Linux: `~/.config/TagMarkdownPyQt6/config.json`
+- Linux / macOS: `~/.config/TagMarkdownPyQt6/config.json`
 - Windows: `AppData\Roaming\TagMarkdownPyQt6\config.json`
 
 ---
 
 # 4. tag_markdown_cli.py — Etiquetar bloques de código (versión terminal)
 
-Ideal para Termux, servidores o scripts automatizados.
+Ideal para macOS, Termux, servidores o scripts automatizados.
 
 ### Uso básico
 
@@ -259,19 +320,49 @@ python3 tag_markdown_cli.py --list-languages
 
 # 5. arreglar_referencias_pmc.py — Limpiar referencias de PMC / PubMed Central
 
-Cuando copias referencias bibliográficas desde artículos de [PubMed Central](https://www.ncbi.nlm.nih.gov/pmc/), el Markdown resultante suele tener problemas:
+Cuando copias referencias bibliográficas desde artículos de [PubMed Central](https://pmc.ncbi.nlm.nih.gov/), el Markdown resultante suele tener problemas:
 
-- Corchetes escapados: `\[texto\]`
-- Enlaces `[PMC free article](...)` que no aportan información
-- Espacios entre enlaces consecutivos `[DOI](...) [PubMed](...)`
+- Corchetes escapados: `\[texto\]` en lugar de `[texto]`
+- Enlaces `[PMC free article](...)` que no aportan información útil
+- Espacios entre enlaces consecutivos: `[DOI](...) [PubMed](...) [Google Scholar](...)`
 - Dobles espacios antes de bloques de enlaces
+- Corchetes vacíos `[]`
 
 Este script los corrige automáticamente.
 
+### Ejemplo
+
+**Entrada** (copiado desde PMC):
+
+```
+Hou K., et al. Microbiota in health and diseases. 2022;7:135.
+doi: 10.1038/s41392-022-00974-4.
+\[[DOI](https://doi.org/10.1038/s41392-022-00974-4)\]
+\[[PMC free article](/articles/PMC9034083/)\]
+\[[PubMed](https://pubmed.ncbi.nlm.nih.gov/35461318/)\]
+\[[Google Scholar](https://scholar.google.com/...)\]
+```
+
+**Salida** (limpia):
+
+```
+Hou K., et al. Microbiota in health and diseases. 2022;7:135.
+doi: 10.1038/s41392-022-00974-4.
+[DOI](https://doi.org/10.1038/s41392-022-00974-4)[PubMed](https://pubmed.ncbi.nlm.nih.gov/35461318/)[Google Scholar](https://scholar.google.com/...)
+```
+
 ### Uso
+
+**Linux / macOS:**
 
 ```bash
 python3 arreglar_referencias_pmc.py
+```
+
+**Windows:**
+
+```powershell
+python arreglar_referencias_pmc.py
 ```
 
 Se abre una ventana con dos paneles (entrada / salida) y los siguientes botones:
@@ -286,11 +377,21 @@ Se abre una ventana con dos paneles (entrada / salida) y los siguientes botones:
 | **Eliminar [] vacíos** | Elimina corchetes vacíos `[]` del resultado |
 | **Limpiar todo** | Limpia ambos paneles |
 
+### Flujo de trabajo recomendado para referencias PMC
+
+1. Abre el artículo en [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/)
+2. Ve a la sección **References**
+3. Copia las referencias en Markdown (puedes usar una extensión de navegador como [Copiloto de Selección](https://microsoftedge.microsoft.com/addons/detail/copiloto-de-selección/ignppgbmdpkamckbgakeofhlbnonpopn) para Edge)
+4. Pega el texto en el panel izquierdo del programa
+5. Haz clic en **Arreglar Markdown**
+6. Opcionalmente haz clic en **Eliminar [] vacíos**
+7. Copia o guarda el resultado
+
 ---
 
 # Flujo completo: Página web → Blogger
 
-Este es el flujo que uso para convertir páginas web en artículos técnicos con código bien formateado:
+Este es el flujo para convertir páginas web en artículos técnicos con código bien formateado:
 
 1. Convertir la página web a Markdown con [urltomarkdown.com](https://urltomarkdown.com/)
 
