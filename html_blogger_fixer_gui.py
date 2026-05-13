@@ -634,20 +634,20 @@ class HtmlFixerApp(QMainWindow):
     def procesar_archivo(self):
         self.guardar_preferencia_fuente()
 
-        dialogo = QFileDialog(self, "Seleccionar archivo HTML")
-        dialogo.setFileMode(QFileDialog.FileMode.ExistingFile)
-        dialogo.setNameFilter("Archivos HTML (*.html *.htm)")
-        dialogo.resize(900, 600)
-        dialogo.setViewMode(QFileDialog.ViewMode.Detail)
-
-        if not dialogo.exec():
+        # Se usa el diálogo nativo del sistema operativo para que atajos
+        # como Ctrl+F (buscar archivo) funcionen igual que en el gestor
+        # de archivos. El diálogo propio de Qt no soporta ese atajo.
+        archivo, _ = QFileDialog.getOpenFileName(
+            self,
+            "Seleccionar archivo HTML",
+            "",
+            "Archivos HTML (*.html *.htm)",
+            options=QFileDialog.Option(0),  # fuerza el diálogo nativo
+        )
+        if not archivo:
             return
 
-        archivos = dialogo.selectedFiles()
-        if not archivos:
-            return
-
-        self._procesar_ruta(archivos[0])
+        self._procesar_ruta(archivo)
 
     def _procesar_ruta(self, filepath):
         """
@@ -739,6 +739,12 @@ class HtmlFixerApp(QMainWindow):
         self._procesar_ruta(file_path)
 
 def main():
+    # Forzar el diálogo de archivos nativo del sistema operativo en Linux.
+    # Debe establecerse antes de crear QApplication para que Qt lo respete.
+    # En Windows y macOS esta variable se ignora sin causar ningún problema.
+    if sys.platform.startswith("linux") and "QT_QPA_PLATFORMTHEME" not in os.environ:
+        os.environ["QT_QPA_PLATFORMTHEME"] = "gtk3"
+
     app = QApplication(sys.argv)
     app.setWindowIcon(crear_icono_app())
     ventana = HtmlFixerApp()

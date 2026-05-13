@@ -59,12 +59,14 @@ O descarga el ZIP desde el botón verde de GitHub y descomprímelo.
 
 ```bash
 sudo apt update
-sudo apt install python3-bs4 python3-pyqt6 qt6-translations-l10n python3-pyqt6.qtsvg pandoc git
+sudo apt install python3-bs4 python3-pyqt6 qt6-translations-l10n qt6-gtk-platformtheme python3-pyqt6.qtsvg pandoc git
 ```
 
 - `python3-bs4` — BeautifulSoup4 para manipulación de HTML
 - `python3-pyqt6` — PyQt6 para las versiones con GUI
 - `qt6-translations-l10n` — traducciones de Qt (diálogos en el idioma del sistema)
+- `qt6-gtk-platformtheme` — hace que el diálogo de abrir archivos use el estilo nativo del escritorio, con soporte para `Ctrl+F` para buscar archivos
+- `python3-pyqt6.qtsvg` — permite mostrar el icono SVG de la aplicación
 - `pandoc` — convierte Markdown a HTML
 
 Paquetes disponibles en:
