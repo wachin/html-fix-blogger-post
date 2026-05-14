@@ -137,8 +137,17 @@ brew install pandoc
 
 ### Linux and macOS
 
+The main GUI:
+
 ```bash
 python3 html_blogger_fixer_gui.py
+```
+
+![](vx_images/01-HTML-Blogger-Fixer-EN.png)
+
+the next scripts:
+
+```
 python3 html_blogger_fixer_cli.py file.html
 python3 tag_markdown_gui.py
 python3 tag_markdown_cli.py file.md
