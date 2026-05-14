@@ -7,7 +7,7 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QStandardPaths, QSize, Qt
+from PyQt6.QtCore import QTranslator, QLocale, QLibraryInfo, QCoreApplication, Qt
 from PyQt6.QtGui import QAction, QDragEnterEvent, QDropEvent, QIcon
 from PyQt6.QtWidgets import (
     QApplication,
@@ -24,53 +24,47 @@ from PyQt6.QtWidgets import (
     QToolBar,
 )
 
+# Shorthand used throughout the file for translations
+def tr(text, disambiguation=None):
+    return QCoreApplication.translate("HtmlFixerApp", text, disambiguation)
+
 
 # ============================================================
-# ICONO DE LA APLICACIÓN
+# APPLICATION ICON
 # ============================================================
 #
-# El icono se carga desde assets/html-blogger-post-fixes.svg,
-# ubicado junto al script. La ruta se resuelve con Path(__file__).parent
-# para que funcione igual en Linux y Windows sin importar desde qué
-# directorio se ejecute el programa.
+# The icon is loaded from assets/html-blogger-post-fixes.svg,
+# located next to this script. The path is resolved with
+# Path(__file__).parent so it works on Linux, Windows and macOS
+# regardless of the working directory.
 #
-# Requisitos para que Qt renderice SVG:
-#   Linux con PyQt6 instalado via apt:  sudo apt install python3-pyqt6.qtsvg
-#     (libqt6svg6 se instala automáticamente como dependencia)
-#   Linux con PyQt6 instalado via pip:  nada extra, SVG ya está incluido
-#   Windows con PyQt6 instalado via pip: nada extra, SVG ya está incluido
+# Requirements for Qt to render SVG:
+#   Linux with PyQt6 installed via apt:  sudo apt install python3-pyqt6.qtsvg
+#     (libqt6svg6 is installed automatically as a dependency)
+#   Linux with PyQt6 installed via pip:  nothing extra, SVG support is included
+#   Windows / macOS with pip:            nothing extra, SVG support is included
 
-def crear_icono_app():
+def create_app_icon():
     """
-    Carga el icono SVG desde assets/ relativo a la ubicación del script.
-    Devuelve un QIcon vacío (sin error) si el archivo no se encuentra.
+    Load the SVG icon from assets/ relative to this script.
+    Returns an empty QIcon (no error) if the file is not found.
     """
-    ruta_icono = Path(__file__).parent / "assets" / "html-blogger-post-fixes.svg"
-    if ruta_icono.exists():
-        return QIcon(str(ruta_icono))
+    icon_path = Path(__file__).parent / "assets" / "html-blogger-post-fixes.svg"
+    if icon_path.exists():
+        return QIcon(str(icon_path))
     return QIcon()
 
 
 # ============================================================
-# CONFIGURACIÓN GENERAL FÁCIL DE EDITAR
+# GENERAL CONFIGURATION
 # ============================================================
 
 APP_NAME = "HtmlFixerPyQt6"
 CONFIG_FILE_NAME = "config.json"
 
-# Aquí puedes añadir fácilmente más etiquetas reconocidas
-# para bloques de código tipo Markdown convertidos a HTML.
-#
-# Ejemplos:
-#   "bash"
-#   "sh"
-#   "shell"
-#   "cmd"
-#   "powershell"
-#   "python"
-#
-# Si luego quieres añadir otra, solo agrégala aquí:
-#   "ruby", "javascript", etc.
+# Add more recognised language labels for Markdown code blocks
+# converted to HTML here. Examples:
+#   "ruby", "javascript", "typescript", "go", "rust", etc.
 MARKDOWN_CODE_LABELS = {
     "bash",
     "sh",
@@ -85,22 +79,20 @@ MARKDOWN_CODE_LABELS = {
     "python",
 }
 
-
 DEFAULT_CONFIG = {
     "table_font_size": "90%"
 }
 
 
 # ============================================================
-# RUTAS Y CONFIGURACIÓN
+# PATHS AND CONFIGURATION
 # ============================================================
 
-def obtener_directorio_config():
+def get_config_dir():
     """
-    Devuelve la carpeta de configuración de la app.
-
-    En Windows usa AppData/Roaming.
-    En Linux usa ~/.config.
+    Return the application configuration folder.
+    Windows: AppData/Roaming
+    Linux / macOS: ~/.config
     """
     if sys.platform.startswith("win"):
         appdata = os.environ.get("APPDATA")
@@ -115,58 +107,49 @@ def obtener_directorio_config():
     return config_dir
 
 
-def obtener_ruta_config():
-    return obtener_directorio_config() / CONFIG_FILE_NAME
+def get_config_path():
+    return get_config_dir() / CONFIG_FILE_NAME
 
 
-def cargar_configuracion():
+def load_config():
     """
-    Carga el archivo de configuración JSON.
-    Si no existe o está dañado, usa valores por defecto.
+    Load the JSON configuration file.
+    Falls back to defaults if the file does not exist or is corrupted.
     """
-    config_path = obtener_ruta_config()
+    config_path = get_config_path()
 
     if not config_path.exists():
-        guardar_configuracion(DEFAULT_CONFIG)
+        save_config(DEFAULT_CONFIG)
         return DEFAULT_CONFIG.copy()
 
     try:
         with config_path.open("r", encoding="utf-8") as f:
             data = json.load(f)
-
         config = DEFAULT_CONFIG.copy()
         config.update(data)
         return config
-
     except Exception:
-        # Si el archivo está corrupto, restauramos valores por defecto
-        guardar_configuracion(DEFAULT_CONFIG)
+        save_config(DEFAULT_CONFIG)
         return DEFAULT_CONFIG.copy()
 
 
-def guardar_configuracion(config):
-    """
-    Guarda la configuración en formato JSON.
-    """
-    config_path = obtener_ruta_config()
+def save_config(config):
+    """Save configuration as JSON."""
+    config_path = get_config_path()
     with config_path.open("w", encoding="utf-8") as f:
         json.dump(config, f, indent=4, ensure_ascii=False)
 
 
 # ============================================================
-# FUNCIONES DE PROCESAMIENTO HTML
+# HTML PROCESSING FUNCTIONS
 # ============================================================
 
-def mejorar_elementos_code(html):
-    """
-    Mejora la apariencia de los elementos <code> simples.
-    Aplica un estilo similar al de código pero más simple que los bloques <pre>.
-    """
-    soup = BeautifulSoup(html, 'html.parser')
-
-    for code in soup.find_all('code'):
-        if not code.find_parent('pre'):
-            code['style'] = (
+def improve_inline_code(html):
+    """Style simple inline <code> elements."""
+    soup = BeautifulSoup(html, "html.parser")
+    for code in soup.find_all("code"):
+        if not code.find_parent("pre"):
+            code["style"] = (
                 "background: #f5f5f5; "
                 "border: 1px solid #d0d0d0; "
                 "border-radius: 3px; "
@@ -178,58 +161,40 @@ def mejorar_elementos_code(html):
     return str(soup)
 
 
-def es_pre_de_codigo_con_etiqueta(pre):
+def is_tagged_code_block(pre):
     """
-    Determina si un <pre> parece corresponder a una caja de código Markdown
-    con alguna de las etiquetas definidas en MARKDOWN_CODE_LABELS.
-
-    Busca clases como:
-      - sourceCode
-      - language-bash
-      - language-cmd
-      - language-powershell
-      - bash
-      - cmd
-      - powershell
-
-    También revisa el <code> interno, por si la clase viene allí.
+    Return True if the <pre> element corresponds to a Markdown code block
+    with a recognised language label (sourceCode, language-bash, bash, etc.).
     """
-    clases_pre = set(pre.get("class", []))
-
+    classes_pre = set(pre.get("class", []))
     code = pre.find("code")
-    clases_code = set(code.get("class", [])) if code else set()
+    classes_code = set(code.get("class", [])) if code else set()
+    all_classes = classes_pre | classes_code
 
-    todas = clases_pre | clases_code
-
-    # Caso clásico de pandoc / resaltado
-    if "sourceCode" in todas:
+    if "sourceCode" in all_classes:
         return True
 
-    # Reconocer language-bash, language-cmd, language-powershell, etc.
-    for etiqueta in MARKDOWN_CODE_LABELS:
-        if etiqueta in todas:
+    for label in MARKDOWN_CODE_LABELS:
+        if label in all_classes:
             return True
-        if f"language-{etiqueta}" in todas:
+        if f"language-{label}" in all_classes:
             return True
 
     return False
 
 
-def mejorar_caja_codigo(html):
+def improve_code_boxes(html):
     """
-    Mejora la apariencia de cajas de código estilo Markdown.
-    Reconoce:
-    - pre.sourceCode
-    - bloques con clases como language-bash, language-cmd, language-powershell
-    - y etiquetas simples añadidas en MARKDOWN_CODE_LABELS
+    Style Markdown code blocks that have a language label.
+    Adds a dark terminal-style box with a top bar and a Copy button.
     """
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
-    for pre in soup.find_all('pre'):
-        if not es_pre_de_codigo_con_etiqueta(pre):
+    for pre in soup.find_all("pre"):
+        if not is_tagged_code_block(pre):
             continue
 
-        container = soup.new_tag('div', style=(
+        container = soup.new_tag("div", style=(
             "margin: 15px 0; "
             "border-radius: 6px; "
             "overflow: hidden; "
@@ -237,7 +202,7 @@ def mejorar_caja_codigo(html):
         ))
         pre.wrap(container)
 
-        pre['style'] = (
+        pre["style"] = (
             "background: #1e1e1e; "
             "color: #f0f0f0; "
             "font-family: 'Ubuntu Mono', 'Courier New', monospace; "
@@ -251,7 +216,7 @@ def mejorar_caja_codigo(html):
             "max-height: 500px; "
         )
 
-        terminal_bar = soup.new_tag('div', style=(
+        terminal_bar = soup.new_tag("div", style=(
             "background: #3a3a3a; "
             "height: 28px; "
             "display: flex; "
@@ -260,21 +225,19 @@ def mejorar_caja_codigo(html):
             "border-bottom: 1px solid #2a2a2a; "
         ))
 
-        for color in ['#FAD510', '#0066CC', '#CE1126']:
-            dot = soup.new_tag('span', style=(
+        for color in ["#FAD510", "#0066CC", "#CE1126"]:
+            dot = soup.new_tag("span", style=(
                 f"background: {color}; "
-                "width: 12px; "
-                "height: 12px; "
-                "border-radius: 50%; "
-                "margin-right: 8px; "
+                "width: 12px; height: 12px; "
+                "border-radius: 50%; margin-right: 8px; "
             ))
             terminal_bar.append(dot)
 
-        copy_btn = soup.new_tag('button', attrs={
+        copy_btn = soup.new_tag("button", attrs={
             "type": "button",
             "class": "code-copy-btn",
-            "title": "Copiar código",
-            "aria-label": "Copiar código",
+            "title": "Copy code",
+            "aria-label": "Copy code",
             "style": (
                 "margin-left:auto;"
                 "background:rgba(255,255,255,0.10);"
@@ -288,48 +251,46 @@ def mejorar_caja_codigo(html):
                 "line-height:1;"
             )
         })
-        copy_btn.string = "Copiar"
+        copy_btn.string = "Copy"
         terminal_bar.append(copy_btn)
 
         container.insert(0, terminal_bar)
 
-        for code in pre.find_all('code'):
-            code['style'] = "color: inherit; font-family: inherit;"
+        for code in pre.find_all("code"):
+            code["style"] = "color: inherit; font-family: inherit;"
 
     return str(soup)
 
 
-def mejorar_tablas(html, porcentaje_fuente):
-    """Mejora la apariencia de las tablas en el HTML con scroll horizontal."""
-    soup = BeautifulSoup(html, 'html.parser')
+def improve_tables(html, font_percentage):
+    """Style HTML tables with alternating rows and horizontal scroll."""
+    soup = BeautifulSoup(html, "html.parser")
 
-    for table in soup.find_all('table'):
-        estilo_tabla = (
+    for table in soup.find_all("table"):
+        table_style = (
             "border-collapse: collapse; "
             "width: 100%; "
             "background-color: #ffffff; "
             "table-layout: auto; "
         )
+        if font_percentage:
+            table_style += f"font-size: {font_percentage}; "
+        table["style"] = table_style
 
-        if porcentaje_fuente:
-            estilo_tabla += f"font-size: {porcentaje_fuente}; "
-
-        table['style'] = estilo_tabla
-
-        for i, row in enumerate(table.find_all('tr')):
+        for i, row in enumerate(table.find_all("tr")):
             if i == 0:
-                row['style'] = (
+                row["style"] = (
                     "background-color: #ececec; "
                     "color: #1f2d3d; "
                     "font-weight: bold;"
                 )
             elif i % 2 == 1:
-                row['style'] = "background-color: #ffffff;"
+                row["style"] = "background-color: #ffffff;"
             else:
-                row['style'] = "background-color: #f5f5f5;"
+                row["style"] = "background-color: #f5f5f5;"
 
-        for th in table.find_all('th'):
-            th['style'] = (
+        for th in table.find_all("th"):
+            th["style"] = (
                 "border: 1px solid #cfcfcf; "
                 "padding: 14px 16px; "
                 "text-align: left; "
@@ -340,8 +301,8 @@ def mejorar_tablas(html, porcentaje_fuente):
                 "max-width: 220px;"
             )
 
-        for td in table.find_all('td'):
-            td['style'] = (
+        for td in table.find_all("td"):
+            td["style"] = (
                 "border: 1px solid #cfcfcf; "
                 "padding: 14px 16px; "
                 "text-align: left; "
@@ -353,46 +314,39 @@ def mejorar_tablas(html, porcentaje_fuente):
                 "max-width: 220px;"
             )
 
-        wrapper = soup.new_tag(
-            'div',
-            attrs={
-                "class": "table-code-box",
-                "style": (
-                    "margin: 18px 0; "
-                    "background: #f8f8f8; "
-                    "border: 1px solid #d8d8d8; "
-                    "border-radius: 6px; "
-                    "overflow-x: auto; "
-                    "overflow-y: hidden; "
-                    "-webkit-overflow-scrolling: touch;"
-                )
-            }
-        )
-
+        wrapper = soup.new_tag("div", attrs={
+            "class": "table-code-box",
+            "style": (
+                "margin: 18px 0; "
+                "background: #f8f8f8; "
+                "border: 1px solid #d8d8d8; "
+                "border-radius: 6px; "
+                "overflow-x: auto; "
+                "overflow-y: hidden; "
+                "-webkit-overflow-scrolling: touch;"
+            )
+        })
         table.insert_before(wrapper)
         wrapper.append(table.extract())
 
     return str(soup)
 
 
-def mejorar_bloques_code_simples(html):
+def improve_simple_code_blocks(html):
     """
-    Mejora la apariencia de los bloques <pre><code> simples que no tienen
-    etiqueta reconocible ni clase sourceCode.
-
-    Usa una clase CSS llamada simple-code-box para que Blogger no destruya
-    tan fácilmente el estilo al editar en Vista de redacción.
+    Style plain <pre><code> blocks that have no recognised language label.
+    Uses the CSS class simple-code-box so Blogger does not strip the style
+    when editing in visual mode.
     """
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
-    for pre in soup.find_all('pre'):
-        if es_pre_de_codigo_con_etiqueta(pre):
+    for pre in soup.find_all("pre"):
+        if is_tagged_code_block(pre):
             continue
 
-        if pre.code and not pre.get('class'):
-            pre['class'] = pre.get('class', []) + ['simple-code-box']
-
-            pre['style'] = (
+        if pre.code and not pre.get("class"):
+            pre["class"] = pre.get("class", []) + ["simple-code-box"]
+            pre["style"] = (
                 "background-color: #f8f8f8; "
                 "border: 1px solid #d0d0d0; "
                 "border-left: 6px solid #d44950; "
@@ -403,16 +357,13 @@ def mejorar_bloques_code_simples(html):
                 "border-radius: 4px; "
             )
 
-            span_outer = soup.new_tag('span', style=(
+            span_outer = soup.new_tag("span", style=(
                 "color: #000000; "
                 "font-family: 'Ubuntu Mono', Consolas, monospace; "
                 "font-size: 15px; "
                 "white-space: pre; "
             ))
-
-            code = pre.code
-            span_outer.string = code.get_text()
-
+            span_outer.string = pre.code.get_text()
             pre.clear()
             pre.append(span_outer)
 
@@ -420,13 +371,13 @@ def mejorar_bloques_code_simples(html):
 
 
 # ============================================================
-# WIDGET ZONA DE ARRASTRAR Y SOLTAR
+# DROP ZONE WIDGET
 # ============================================================
 
 class DropZoneWidget(QFrame):
     """
-    Widget visual que muestra la zona de arrastrar y soltar.
-    No captura eventos de drop (los maneja la ventana principal).
+    Visual drop zone widget.
+    Does not capture drop events itself — the main window handles them.
     """
     def __init__(self, on_upload_clicked, parent=None):
         super().__init__(parent)
@@ -448,18 +399,20 @@ class DropZoneWidget(QFrame):
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.setSpacing(6)
 
-        lbl_drag = QLabel("Drag and drop files")
-        lbl_drag.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        lbl_drag.setStyleSheet("font-size: 15px; font-weight: bold; color: #222; border: none;")
+        self.lbl_drag = QLabel(tr("Drag and drop files"))
+        self.lbl_drag.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lbl_drag.setStyleSheet(
+            "font-size: 15px; font-weight: bold; color: #222; border: none;"
+        )
 
-        lbl_or = QLabel("or")
-        lbl_or.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        lbl_or.setStyleSheet("font-size: 13px; color: #666; border: none;")
+        self.lbl_or = QLabel(tr("or"))
+        self.lbl_or.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lbl_or.setStyleSheet("font-size: 13px; color: #666; border: none;")
 
-        btn_upload = QPushButton("⬆  Upload")
-        btn_upload.setFixedSize(130, 36)
-        btn_upload.setCursor(Qt.CursorShape.PointingHandCursor)
-        btn_upload.setStyleSheet("""
+        self.btn_upload = QPushButton(tr("⬆  Upload"))
+        self.btn_upload.setFixedSize(130, 36)
+        self.btn_upload.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_upload.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:0,
@@ -482,215 +435,255 @@ class DropZoneWidget(QFrame):
                 background: #117a63;
             }
         """)
-        btn_upload.clicked.connect(on_upload_clicked)
+        self.btn_upload.clicked.connect(on_upload_clicked)
 
-        layout.addWidget(lbl_drag)
-        layout.addWidget(lbl_or)
-        layout.addWidget(btn_upload, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.lbl_drag)
+        layout.addWidget(self.lbl_or)
+        layout.addWidget(self.btn_upload, alignment=Qt.AlignmentFlag.AlignCenter)
         self.setLayout(layout)
 
 
 # ============================================================
-# INTERFAZ
+# MAIN WINDOW
 # ============================================================
 
 class HtmlFixerApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.translator = QTranslator()
-        self.cargar_traducciones_qt()
+        self.app_translator = QTranslator()
+        self.qt_translator = QTranslator()
+        self._load_app_translation()
+        self._load_qt_translation()
 
-        self.config = cargar_configuracion()
+        self.config = load_config()
 
-        self.setWindowTitle("Mejorador de HTML")
-        self.setWindowIcon(crear_icono_app())
+        self.setWindowTitle(tr("HTML Blogger Fixer"))
+        self.setWindowIcon(create_app_icon())
         self.resize(520, 310)
         self.setAcceptDrops(True)
 
         self.init_ui()
-        self.centrar_ventana()
+        self.center_window()
 
-    def centrar_ventana(self):
-        """
-        Centra la ventana principal en la pantalla.
-        """
+    def center_window(self):
+        """Center the main window on the screen."""
         frame = self.frameGeometry()
         screen = QApplication.primaryScreen()
-        centro_pantalla = screen.availableGeometry().center()
-        frame.moveCenter(centro_pantalla)
+        center = screen.availableGeometry().center()
+        frame.moveCenter(center)
         self.move(frame.topLeft())
 
-    def mostrar_acerca_de(self):
-        texto = (
-            "<b>HTML Blogger Fixer PyQt6</b><br><br>"
-            "<b>Desarrollador:</b> Washington Indacochea Delgado<br>"
-            "<b>Correo:</b> linuxfrontier@proton.me<br>"
-            "<b>Página web:</b> "
-            "<a href='https://github.com/wachin/html-fix-blogger-post'>"
-            "https://github.com/wachin/html-fix-blogger-post</a><br><br>"
-            "<b>Tecnología usada:</b><br>"
-            "- Python 3<br>"
-            "- PyQt6<br>"
-            "- BeautifulSoup4<br>"
-            "- JSON para configuración<br>"
-        )
+    # ----------------------------------------------------------
+    # Translation loaders
+    # ----------------------------------------------------------
 
-        msg = QMessageBox(self)
-        msg.setWindowTitle("Acerca de...")
-        msg.setTextFormat(msg.textFormat().RichText)
-        msg.setText(texto)
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        msg.exec()
-
-    def cargar_traducciones_qt(self):
+    def _load_app_translation(self):
         """
-        Carga las traducciones de Qt para que los diálogos del sistema Qt
-        aparezcan en el idioma configurado, siempre que esté instalado
-        qt6-translations-l10n.
+        Load the application .qm translation file from translations/
+        based on the system locale.
+
+        File naming convention:
+            translations/html_blogger_fixer_es.qm   (Spanish)
+            translations/html_blogger_fixer_en.qm   (English — optional base)
+
+        Falls back silently to the built-in English strings if no file
+        is found for the current locale.
+        """
+        locale_name = QLocale.system().name()       # e.g. es_EC
+        locale_short = locale_name.split("_")[0]    # e.g. es
+
+        translations_dir = Path(__file__).parent / "translations"
+
+        candidates = [
+            translations_dir / f"html_blogger_fixer_{locale_name}.qm",
+            translations_dir / f"html_blogger_fixer_{locale_short}.qm",
+        ]
+
+        for path in candidates:
+            if path.exists() and self.app_translator.load(str(path)):
+                QApplication.installTranslator(self.app_translator)
+                print(f"App translation loaded: {path.name}")
+                return
+
+        print(f"No app translation found for locale '{locale_name}', using English.")
+
+    def _load_qt_translation(self):
+        """
+        Load Qt's own built-in translations (file dialogs, buttons, etc.)
+        so they appear in the system language.
+        Requires qt6-translations-l10n installed on Linux.
         """
         translations_path = QLibraryInfo.path(
             QLibraryInfo.LibraryPath.TranslationsPath
         )
+        locale_name = QLocale.system().name()
+        locale_short = locale_name.split("_")[0]
 
-        locale_name = QLocale.system().name()          # ej: es_EC
-        locale_short = locale_name.split("_")[0]      # ej: es
+        for name in [f"qtbase_{locale_name}", f"qtbase_{locale_short}"]:
+            if self.qt_translator.load(name, translations_path):
+                QApplication.installTranslator(self.qt_translator)
+                print(f"Qt translation loaded: {name}")
+                return
 
-        candidatos = [
-            f"qtbase_{locale_name}",
-            f"qtbase_{locale_short}",
-        ]
+        print("No Qt translation found.")
 
-        cargado = False
-        for nombre in candidatos:
-            if self.translator.load(nombre, translations_path):
-                QApplication.installTranslator(self.translator)
-                print(f"Traducción cargada correctamente: {nombre}")
-                cargado = True
-                break
+    # ----------------------------------------------------------
+    # About dialog
+    # ----------------------------------------------------------
 
-        if not cargado:
-            print("No se pudo cargar la traducción de Qt.")
-            print(f"Ruta de traducciones: {translations_path}")
+    def show_about(self):
+        text = (
+            "<b>HTML Blogger Fixer PyQt6</b><br><br>"
+            "<b>" + tr("Developer") + ":</b> Washington Indacochea Delgado<br>"
+            "<b>" + tr("Email") + ":</b> linuxfrontier@proton.me<br>"
+            "<b>" + tr("Website") + ":</b> "
+            "<a href='https://github.com/wachin/html-fix-blogger-post'>"
+            "https://github.com/wachin/html-fix-blogger-post</a><br><br>"
+            "<b>" + tr("Technologies used") + ":</b><br>"
+            "- Python 3<br>"
+            "- PyQt6<br>"
+            "- BeautifulSoup4<br>"
+            "- JSON<br>"
+        )
+        msg = QMessageBox(self)
+        msg.setWindowTitle(tr("About"))
+        msg.setTextFormat(msg.textFormat().RichText)
+        msg.setText(text)
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg.exec()
+
+    # ----------------------------------------------------------
+    # UI setup
+    # ----------------------------------------------------------
 
     def init_ui(self):
-        # Barra superior debajo de la barra de título
-        self.toolbar = QToolBar("Barra principal")
+        # Toolbar
+        self.toolbar = QToolBar(tr("Main toolbar"))
         self.toolbar.setMovable(False)
         self.toolbar.setFloatable(False)
         self.addToolBar(self.toolbar)
 
-        self.boton_acerca_de = QPushButton("Acerca de...")
-        self.boton_acerca_de.clicked.connect(self.mostrar_acerca_de)
-        self.toolbar.addWidget(self.boton_acerca_de)
+        self.btn_about = QPushButton(tr("About..."))
+        self.btn_about.clicked.connect(self.show_about)
+        self.toolbar.addWidget(self.btn_about)
 
-        # Widget central
+        # Central widget
         central_widget = QWidget()
         layout = QVBoxLayout()
         layout.setSpacing(8)
         layout.setContentsMargins(14, 10, 14, 10)
 
-        self.label_fuente = QLabel(
-            "Elije el tamaño de la fuente de la tabla (ej: 90%, 100%, etc):"
+        self.label_font = QLabel(
+            tr("Table font size (e.g. 90%, 100%, etc.):")
         )
-        layout.addWidget(self.label_fuente)
+        layout.addWidget(self.label_font)
 
-        self.entry_fuente = QLineEdit()
-        self.entry_fuente.setText(self.config.get("table_font_size", "90%"))
-        layout.addWidget(self.entry_fuente)
+        self.entry_font = QLineEdit()
+        self.entry_font.setText(self.config.get("table_font_size", "90%"))
+        layout.addWidget(self.entry_font)
 
-        # Zona de arrastrar y soltar
-        self.drop_zone = DropZoneWidget(on_upload_clicked=self.procesar_archivo)
+        # Drop zone
+        self.drop_zone = DropZoneWidget(on_upload_clicked=self.open_file_dialog)
         layout.addWidget(self.drop_zone)
 
-        self.resultado_label = QLabel("")
-        self.resultado_label.setWordWrap(True)
-        layout.addWidget(self.resultado_label)
+        self.result_label = QLabel("")
+        self.result_label.setWordWrap(True)
+        layout.addWidget(self.result_label)
 
-        self.info_config_label = QLabel(
-            f"Archivo de configuración:\n{obtener_ruta_config()}"
+        self.config_label = QLabel(
+            tr("Configuration file:") + f"\n{get_config_path()}"
         )
-        self.info_config_label.setWordWrap(True)
-        layout.addWidget(self.info_config_label)
+        self.config_label.setWordWrap(True)
+        layout.addWidget(self.config_label)
 
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
-    def normalizar_porcentaje_fuente(self, texto):
-        """
-        Si el usuario escribe 90 en vez de 90%, lo corrige automáticamente.
-        """
-        texto = texto.strip()
-        if texto and not texto.endswith('%'):
-            texto += '%'
-        return texto
+    # ----------------------------------------------------------
+    # Font size helpers
+    # ----------------------------------------------------------
 
-    def guardar_preferencia_fuente(self):
-        valor = self.normalizar_porcentaje_fuente(self.entry_fuente.text())
-        self.entry_fuente.setText(valor)
-        self.config["table_font_size"] = valor
-        guardar_configuracion(self.config)
+    def normalize_font_size(self, text):
+        """Append % if the user typed a bare number like 90."""
+        text = text.strip()
+        if text and not text.endswith("%"):
+            text += "%"
+        return text
 
-    def procesar_archivo(self):
-        self.guardar_preferencia_fuente()
+    def save_font_preference(self):
+        value = self.normalize_font_size(self.entry_font.text())
+        self.entry_font.setText(value)
+        self.config["table_font_size"] = value
+        save_config(self.config)
 
-        # Se usa el diálogo nativo del sistema operativo para que atajos
-        # como Ctrl+F (buscar archivo) funcionen igual que en el gestor
-        # de archivos. El diálogo propio de Qt no soporta ese atajo.
-        archivo, _ = QFileDialog.getOpenFileName(
+    # ----------------------------------------------------------
+    # File opening
+    # ----------------------------------------------------------
+
+    def open_file_dialog(self):
+        self.save_font_preference()
+
+        # Use the native OS file dialog so shortcuts like Ctrl+F work.
+        # On Linux launch via html_blogger_fixer_gui.sh to get the GTK dialog.
+        file_path, _ = QFileDialog.getOpenFileName(
             self,
-            "Seleccionar archivo HTML",
+            tr("Select HTML file"),
             "",
-            "Archivos HTML (*.html *.htm)",
-            options=QFileDialog.Option(0),  # fuerza el diálogo nativo
+            tr("HTML files (*.html *.htm)"),
+            options=QFileDialog.Option(0),
         )
-        if not archivo:
+        if not file_path:
             return
+        self._process_path(file_path)
 
-        self._procesar_ruta(archivo)
+    # ----------------------------------------------------------
+    # Core processing
+    # ----------------------------------------------------------
 
-    def _procesar_ruta(self, filepath):
+    def _process_path(self, filepath):
         """
-        Lógica central de procesamiento. Recibe la ruta del archivo HTML,
-        lo procesa y guarda el resultado. Usada tanto por el diálogo de
-        apertura como por el arrastrar y soltar.
+        Process the given HTML file and save the result.
+        Called both from the file dialog and from drag-and-drop.
         """
-        self.guardar_preferencia_fuente()
-        porcentaje_fuente = self.config.get("table_font_size", "90%")
+        self.save_font_preference()
+        font_size = self.config.get("table_font_size", "90%")
 
         try:
-            ruta_entrada = Path(filepath)
+            input_path = Path(filepath)
 
-            with ruta_entrada.open('r', encoding='utf-8') as file:
-                html = file.read()
+            with input_path.open("r", encoding="utf-8") as f:
+                html = f.read()
 
-            html = mejorar_elementos_code(html)
-            html = mejorar_caja_codigo(html)
-            html = mejorar_tablas(html, porcentaje_fuente)
-            html = mejorar_bloques_code_simples(html)
+            html = improve_inline_code(html)
+            html = improve_code_boxes(html)
+            html = improve_tables(html, font_size)
+            html = improve_simple_code_blocks(html)
 
-            ruta_salida = ruta_entrada.with_name(f"{ruta_entrada.stem}-fix.html")
+            output_path = input_path.with_name(f"{input_path.stem}-fix.html")
 
-            with ruta_salida.open('w', encoding='utf-8') as file:
-                file.write(html)
+            with output_path.open("w", encoding="utf-8") as f:
+                f.write(html)
 
-            self.resultado_label.setText(f"Archivo guardado en:\n{ruta_salida}")
+            self.result_label.setText(
+                tr("File saved to:") + f"\n{output_path}"
+            )
 
             QMessageBox.information(
                 self,
-                "Proceso completado",
-                f"Archivo guardado correctamente en:\n{ruta_salida}"
+                tr("Done"),
+                tr("File saved successfully to:") + f"\n{output_path}",
             )
 
         except Exception as e:
             QMessageBox.critical(
                 self,
-                "Error",
-                f"Ocurrió un error al procesar el archivo:\n{e}"
+                tr("Error"),
+                tr("An error occurred while processing the file:") + f"\n{e}",
             )
 
     # ----------------------------------------------------------
-    # Drag & Drop
+    # Drag and drop
     # ----------------------------------------------------------
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -707,48 +700,46 @@ class HtmlFixerApp(QMainWindow):
 
     def dropEvent(self, event: QDropEvent):
         if event.mimeData().hasUrls():
-            url = event.mimeData().urls()[0]
-            file_path = url.toLocalFile()
+            file_path = event.mimeData().urls()[0].toLocalFile()
             self.open_dropped_file(file_path)
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def open_dropped_file(self, file_path):
-        """
-        Abre un archivo recibido por arrastrar y soltar.
-        Valida que exista y tenga extensión HTML antes de procesarlo.
-        """
+        """Validate and process a file received via drag-and-drop."""
         if not os.path.exists(file_path):
             QMessageBox.warning(
                 self,
-                "Archivo no encontrado",
-                f"El archivo no existe:\n{file_path}"
+                tr("File not found"),
+                tr("The file does not exist:") + f"\n{file_path}",
             )
             return
 
-        if not file_path.lower().endswith(('.html', '.htm')):
+        if not file_path.lower().endswith((".html", ".htm")):
             QMessageBox.warning(
                 self,
-                "Tipo de archivo no válido",
-                "Solo se aceptan archivos HTML (.html o .htm).\n"
-                f"Archivo recibido: {file_path}"
+                tr("Invalid file type"),
+                tr("Only HTML files (.html or .htm) are accepted.") + f"\n{file_path}",
             )
             return
 
-        self._procesar_ruta(file_path)
+        self._process_path(file_path)
+
+
+# ============================================================
+# ENTRY POINT
+# ============================================================
 
 def main():
-    # Forzar el diálogo de archivos nativo del sistema operativo en Linux.
-    # Debe establecerse antes de crear QApplication para que Qt lo respete.
-    # En Windows y macOS esta variable se ignora sin causar ningún problema.
-    if sys.platform.startswith("linux") and "QT_QPA_PLATFORMTHEME" not in os.environ:
-        os.environ["QT_QPA_PLATFORMTHEME"] = "gtk3"
-
+    # The native GTK file dialog (with Ctrl+F support) requires
+    # QT_QPA_PLATFORMTHEME=gtk3 to be set BEFORE the process starts.
+    # On Linux, use the provided launcher: html_blogger_fixer_gui.sh
+    # On Windows and macOS the native dialog works automatically.
     app = QApplication(sys.argv)
-    app.setWindowIcon(crear_icono_app())
-    ventana = HtmlFixerApp()
-    ventana.show()
+    app.setWindowIcon(create_app_icon())
+    window = HtmlFixerApp()
+    window.show()
     sys.exit(app.exec())
 
 

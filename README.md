@@ -55,22 +55,23 @@ O descarga el ZIP desde el botón verde de GitHub y descomprímelo.
 
 ## Instalación
 
-### Linux — Debian, Ubuntu y derivados
+### Linux — Debian, Ubuntu and derivatives
 
 ```bash
 sudo apt update
-sudo apt install python3-bs4 python3-pyqt6 qt6-translations-l10n qt6-gtk-platformtheme python3-pyqt6.qtsvg pandoc git
+sudo apt install python3-bs4 python3-pyqt6 qt6-translations-l10n qt6-gtk-platformtheme python3-pyqt6.qtsvg qttools5-dev-tools pandoc git
 ```
 
-- `python3-bs4` — BeautifulSoup4 para manipulación de HTML
-- `python3-pyqt6` — PyQt6 para las versiones con GUI
-- `qt6-translations-l10n` — traducciones de Qt (diálogos en el idioma del sistema)
-- `qt6-gtk-platformtheme` — hace que el diálogo de abrir archivos use el estilo nativo del escritorio, con soporte para `Ctrl+F` para buscar archivos
-- `python3-pyqt6.qtsvg` — permite mostrar el icono SVG de la aplicación
-- `pandoc` — convierte Markdown a HTML
+- `python3-bs4` — BeautifulSoup4 for HTML manipulation
+- `python3-pyqt6` — PyQt6 for the GUI versions
+- `qt6-translations-l10n` — Qt translations (dialogs in the system language)
+- `qt6-gtk-platformtheme` — native OS file dialog with `Ctrl+F` support
+- `python3-pyqt6.qtsvg` — renders the SVG application icon
+- `qttools5-dev-tools` — provides `lrelease` to compile `.ts` translation files to `.qm`
+- `pandoc` — converts Markdown to HTML
 
-Paquetes disponibles en:
-- [packages.debian.org/python3-bs4](https://packages.debian.org/python3-bs4) (desde bullseye)
+Packages available at:
+- [packages.debian.org/python3-bs4](https://packages.debian.org/python3-bs4) (since bullseye)
 - [packages.ubuntu.com/python3-bs4](https://packages.ubuntu.com/python3-bs4)
 
 ### Android — Termux
@@ -154,6 +155,48 @@ python arreglar_referencias_pmc.py
 
 ---
 
+## Translations (i18n)
+
+The GUI programs use Qt Linguist `.ts` / `.qm` files for internationalization. The translation files live in the `translations/` folder.
+
+The application automatically loads the translation matching the system locale. If no translation is found it falls back to English.
+
+### Available translations
+
+| File | Language |
+|---|---|
+| `translations/html_blogger_fixer_en.ts` / `.qm` | English (base) |
+| `translations/html_blogger_fixer_es.ts` / `.qm` | Spanish |
+
+### Compiling translations after editing a `.ts` file
+
+```bash
+lrelease translations/html_blogger_fixer_es.ts -qm translations/html_blogger_fixer_es.qm
+```
+
+On Linux `lrelease` is provided by the `qttools5-dev-tools` package:
+
+```bash
+sudo apt install qttools5-dev-tools
+```
+
+On Windows and macOS it is included with the Qt installation or available via `pip install PyQt6-tools`.
+
+### Adding a new language
+
+1. Copy `translations/html_blogger_fixer_en.ts` to `translations/html_blogger_fixer_XX.ts`  
+   (where `XX` is the locale code, e.g. `fr`, `de`, `pt_BR`)
+2. Open the file in **Qt Linguist** or any text editor and fill in the `<translation>` tags
+3. Compile it:
+
+```bash
+lrelease translations/html_blogger_fixer_XX.ts -qm translations/html_blogger_fixer_XX.qm
+```
+
+The program will pick it up automatically on a system with that locale.
+
+---
+
 ## Paso previo: convertir Markdown a HTML con Pandoc
 
 ```bash
@@ -204,13 +247,36 @@ La configuración (tamaño de fuente) se guarda en:
 - Windows: `AppData\Roaming\HtmlFixerPyQt6\config.json`
 - macOS: `~/.config/HtmlFixerPyQt6/config.json`
 
+### Cambiar el tamaño de la ventana
+
+El tamaño inicial de la ventana se controla con esta línea en `html_blogger_fixer_gui.py`:
+
+```python
+self.resize(520, 310)
+```
+
+El primer número es el **ancho** y el segundo es el **alto**, ambos en píxeles.
+
+Ejemplos:
+
+```python
+# Ventana más pequeña
+self.resize(420, 280)
+
+# Ventana más grande
+self.resize(650, 400)
+
+# Ventana ancha para pantallas grandes
+self.resize(800, 420)
+```
+
 ---
 
 # 2. html_blogger_fixer_cli.py — Versión de terminal
 
 Ideal para Linux, macOS, Termux o automatización.
 
-### Uso básico
+## Uso básico
 
 ```bash
 python3 html_blogger_fixer_cli.py archivo.html
@@ -218,7 +284,7 @@ python3 html_blogger_fixer_cli.py archivo.html
 
 Genera `archivo-fix.html` en la misma carpeta.
 
-### Opciones
+## Opciones
 
 ```
 python3 html_blogger_fixer_cli.py [opciones] archivo.html
@@ -229,7 +295,7 @@ python3 html_blogger_fixer_cli.py [opciones] archivo.html
   --show-config       Muestra la ruta y contenido del archivo de configuración
 ```
 
-### Ejemplos
+## Ejemplos
 
 ```bash
 # Procesar con opciones por defecto
@@ -256,7 +322,7 @@ sudo apt update
 
 Pandoc necesita la etiqueta para generar una caja de código con estilo. Este script la añade automáticamente.
 
-### Uso
+## Uso
 
 ```bash
 python3 tag_markdown_gui.py
@@ -280,7 +346,7 @@ La configuración (última etiqueta usada, última carpeta) se guarda en:
 
 Ideal para macOS, Termux, servidores o scripts automatizados.
 
-### Uso básico
+## Uso básico
 
 ```bash
 python3 tag_markdown_cli.py archivo.md
@@ -288,7 +354,7 @@ python3 tag_markdown_cli.py archivo.md
 
 Genera `archivo-taged.md` con etiqueta `bash` por defecto.
 
-### Opciones
+## Opciones
 
 ```
 python3 tag_markdown_cli.py [opciones] archivo.md
@@ -300,7 +366,7 @@ python3 tag_markdown_cli.py [opciones] archivo.md
   --list-languages     Muestra las etiquetas sugeridas
 ```
 
-### Ejemplos
+## Ejemplos
 
 ```bash
 # Etiquetar con bash (por defecto)
@@ -332,7 +398,7 @@ Cuando copias referencias bibliográficas desde artículos de [PubMed Central](h
 
 Este script los corrige automáticamente.
 
-### Ejemplo
+## Ejemplo
 
 **Entrada** (copiado desde PMC):
 
@@ -353,7 +419,7 @@ doi: 10.1038/s41392-022-00974-4.
 [DOI](https://doi.org/10.1038/s41392-022-00974-4)[PubMed](https://pubmed.ncbi.nlm.nih.gov/35461318/)[Google Scholar](https://scholar.google.com/...)
 ```
 
-### Uso
+## Uso
 
 **Linux / macOS:**
 
