@@ -483,15 +483,29 @@ class HtmlFixerApp(QMainWindow):
         Load the application .qm translation file from translations/
         based on the system locale.
 
+        The locale is determined in this order:
+          1. LANGUAGE environment variable (e.g. LANGUAGE=fr python3 ...)
+          2. System locale from QLocale
+
         File naming convention:
-            translations/html_blogger_fixer_es.qm   (Spanish)
-            translations/html_blogger_fixer_en.qm   (English — optional base)
+            translations/html_blogger_fixer_es.qm      (Spanish)
+            translations/html_blogger_fixer_pt_BR.qm   (Portuguese Brazil)
+            translations/html_blogger_fixer_en.qm      (English — optional base)
 
         Falls back silently to the built-in English strings if no file
         is found for the current locale.
         """
-        locale_name = QLocale.system().name()       # e.g. es_EC
-        locale_short = locale_name.split("_")[0]    # e.g. es
+        # Allow overriding the locale from the terminal for testing:
+        #   LANGUAGE=fr python3 html_blogger_fixer_gui.py
+        env_lang = os.environ.get("LANGUAGE", "").strip()
+
+        if env_lang:
+            # Normalise: "pt_BR" stays as-is, "fr" stays as-is
+            locale_name = env_lang.replace("-", "_")
+            locale_short = locale_name.split("_")[0]
+        else:
+            locale_name = QLocale.system().name()    # e.g. es_EC
+            locale_short = locale_name.split("_")[0] # e.g. es
 
         translations_dir = Path(__file__).parent / "translations"
 

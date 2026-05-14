@@ -169,6 +169,62 @@ The application automatically loads the translation matching the system locale. 
 |---|---|
 | `translations/html_blogger_fixer_en.ts` / `.qm` | English (base) |
 | `translations/html_blogger_fixer_es.ts` / `.qm` | Spanish |
+| `translations/html_blogger_fixer_ru.ts` / `.qm` | Russian |
+| `translations/html_blogger_fixer_ja.ts` / `.qm` | Japanese |
+| `translations/html_blogger_fixer_ko.ts` / `.qm` | Korean |
+| `translations/html_blogger_fixer_fr.ts` / `.qm` | French |
+| `translations/html_blogger_fixer_de.ts` / `.qm` | German |
+| `translations/html_blogger_fixer_zh_CN.ts` / `.qm` | Chinese (Simplified) |
+| `translations/html_blogger_fixer_zh_TW.ts` / `.qm` | Chinese (Traditional) |
+| `translations/html_blogger_fixer_pt_BR.ts` / `.qm` | Portuguese (Brazil) |
+
+### Testing a specific language from the terminal
+
+You can force the program to run in any language without changing your system locale by setting the `LANGUAGE` environment variable before launching:
+
+```bash
+# Russian
+LANGUAGE=ru python3 html_blogger_fixer_gui.py
+
+# Japanese
+LANGUAGE=ja python3 html_blogger_fixer_gui.py
+
+# Korean
+LANGUAGE=ko python3 html_blogger_fixer_gui.py
+
+# French
+LANGUAGE=fr python3 html_blogger_fixer_gui.py
+
+# German
+LANGUAGE=de python3 html_blogger_fixer_gui.py
+
+# Chinese (Simplified)
+LANGUAGE=zh_CN python3 html_blogger_fixer_gui.py
+
+# Chinese (Traditional)
+LANGUAGE=zh_TW python3 html_blogger_fixer_gui.py
+
+# Portuguese (Brazil)
+LANGUAGE=pt_BR python3 html_blogger_fixer_gui.py
+
+# Spanish
+LANGUAGE=es python3 html_blogger_fixer_gui.py
+
+# English (default fallback)
+LANGUAGE=en python3 html_blogger_fixer_gui.py
+```
+
+On Windows (PowerShell):
+
+```powershell
+$env:LANGUAGE="fr"; python html_blogger_fixer_gui.py
+```
+
+On Windows (CMD):
+
+```cmd
+set LANGUAGE=fr && python html_blogger_fixer_gui.py
+```
 
 ### Compiling translations after editing a `.ts` file
 
