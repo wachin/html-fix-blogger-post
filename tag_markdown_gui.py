@@ -231,7 +231,8 @@ class DropZoneWidget(QFrame):
         self.lbl_or.setStyleSheet("font-size: 13px; color: #666; border: none;")
 
         self.btn_browse = QPushButton(tr("⬆  Browse .md file"))
-        self.btn_browse.setFixedSize(160, 36)
+        self.btn_browse.setMinimumWidth(180)
+        self.btn_browse.setFixedHeight(36)
         self.btn_browse.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_browse.setStyleSheet("""
             QPushButton {
